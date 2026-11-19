@@ -6,7 +6,7 @@ The implementation agent updates this file after each increment. Status values: 
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | 01 | `01-project-skeleton.md` | structure, stack, SRS-NFR-005 | green | Package install and import | Both packages install with `[test]` extras and import; every tree folder exists | Packages install but some tree folders are missing | Install or import fails |
 | 02 | `02-docker-and-dependencies.md` | stack, SRS-NFR-001 | green | `docker compose build` result | Build succeeds; `engine-test` has no FastAPI; `portal` and `dev` have 4 CPUs, 8 GB, and `portal` maps 9090 | Build succeeds but a limit or port is wrong | Build fails, or `dev/` or `docs/` enters the build context |
-| 03 | `03-quality-gates.md` | structure, hard constraints | not started | Ruff and import-linter results | Ruff passes; four contracts kept; a test outward import is caught | Checks pass but CI workflow is incomplete | A contract is missing or does not catch the test import |
+| 03 | `03-quality-gates.md` | structure, hard constraints | green | Ruff and import-linter results | Ruff passes; four contracts kept; a test outward import is caught | Checks pass but CI workflow is incomplete | A contract is missing or does not catch the test import |
 | 04 ⚠ CRITICAL | `04-color-rules.md` | SRS-FR-005, SRS-NFR-007 | not started | Mean per pixel difference from DaltonLens; Sharma pairs | Under 1 percent at every tested severity; Sharma pairs within 0.0001; `engine-test` builds | Under 2 percent, or exact only at severity 1.0 | 2 percent or more, a Sharma pair fails, or gray changes color |
 | 05 | `05-image-decode.md` | SRS-FR-001, SRS-FR-002, SRS-NFR-004, SRS-FR-007 | not started | Fixture results | Every fixture gives the expected pixels or reason; P3 within 2 units | One edge fixture (P3 or EXIF) wrong; all rejections right | A renamed, truncated, oversized, or over-12-megapixel file is accepted |
 | 06 | `06-palette-extraction.md` | SRS-FR-005 | not started | CIEDE2000 from known colors | Every known color within 2; runs identical | Every known color within 5 | A known color missing, or runs differ |
@@ -24,3 +24,13 @@ The implementation agent updates this file after each increment. Status values: 
 | 18 ⚠ CRITICAL | `18-accessibility-and-copy.md` | SRS-NFR-002, SRS-NFR-003, SRS-NFR-006 | not started | axe violations; keyboard run; scroll width; copy check | 0 axe violations; full keyboard run; no horizontal scroll at 375 and 1280 px; copy check passes | Only minor axe issues outside contrast and labels | A contrast or label violation, a keyboard trap, or a banned claim |
 | 19 | `19-processing-time.md` | SRS-NFR-001 | not started | Seconds for a 12 megapixel image on the reference host | Under 30 s; rejection under 2 s | 30 to 45 s | Over 45 s, or a speed fix changed a result |
 | 20 | `20-documentation-and-diagrams.md` | SRS-NFR-006, structure | not started | Diagram renders; link check; guide walkthrough | All SVGs regenerate with no diff; all links resolve; walkthrough succeeds | A link or description is missing | An SVG edited by hand or missing, or the guide makes a medical claim |
+
+## Notes
+
+Changes from an increment file that were needed for its verification to pass.
+
+| Increment | Change | Reason |
+| --- | --- | --- |
+| 02 | The `dev` stage installs `libatomic1` before `playwright install`. | Playwright's bundled Node needs it on arm64 slim images; without it the build exits 127. |
+| 03 | `src/color_engine/pyproject.toml` also has the `[tool.ruff]` settings. | Ruff reads only the nearest `pyproject.toml` with `[tool.ruff]`, so engine files would otherwise be linted with defaults. |
+| 03 | In `ci.yml`, lint and dependency-rule steps run before the `engine-test` build. | `engine-test` fails with "no tests ran" until increment 04; this order keeps the lint and dependency checks reporting meanwhile. |

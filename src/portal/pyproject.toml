@@ -30,3 +30,47 @@ include = ["chromasense*"]
 
 [tool.setuptools.package-data]
 chromasense = ["web_ui/**/*"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = [".", "../color_engine"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+
+# Dependency rules from dev/architecture.md (Hard constraints). Do not weaken them.
+[tool.importlinter]
+root_packages = ["chromasense", "color_engine"]
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "Application Core does not import outer parts or the web framework"
+type = "forbidden"
+source_modules = ["chromasense.core"]
+forbidden_modules = [
+    "chromasense.web_api",
+    "chromasense.storage",
+    "chromasense.main",
+    "fastapi",
+    "starlette",
+    "uvicorn",
+]
+
+[[tool.importlinter.contracts]]
+name = "Color Engine does not import the portal, the web framework, or HTTP clients"
+type = "forbidden"
+source_modules = ["color_engine"]
+forbidden_modules = ["chromasense", "fastapi", "starlette", "uvicorn", "httpx"]
+
+[[tool.importlinter.contracts]]
+name = "Web API does not import the Storage Adapter"
+type = "forbidden"
+source_modules = ["chromasense.web_api"]
+forbidden_modules = ["chromasense.storage"]
+
+[[tool.importlinter.contracts]]
+name = "Storage Adapter does not import the Web API"
+type = "forbidden"
+source_modules = ["chromasense.storage"]
+forbidden_modules = ["chromasense.web_api"]

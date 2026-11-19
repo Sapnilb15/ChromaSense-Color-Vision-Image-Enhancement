@@ -22,3 +22,23 @@ include = ["color_engine*"]
 
 [tool.setuptools.package-data]
 color_engine = ["data/*"]
+
+# Same rules as src/portal/pyproject.toml. Ruff reads the nearest file with [tool.ruff].
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["."]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--import-mode=importlib"
+
+[tool.coverage.run]
+source = ["color_engine"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
