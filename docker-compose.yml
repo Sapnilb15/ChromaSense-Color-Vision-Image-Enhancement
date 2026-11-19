@@ -1,0 +1,48 @@
+services:
+  portal:
+    build:
+      context: .
+      target: runtime
+    ports:
+      - "9090:9090"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      CHROMASENSE_DATA_DIR: /data
+    volumes:
+      - chromasense-data:/data
+    cpus: 4
+    mem_limit: 8g
+
+  dev:
+    build:
+      context: .
+      target: dev
+    working_dir: /workspace
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      CHROMASENSE_DATA_DIR: /data
+    volumes:
+      - .:/workspace
+    cpus: 4
+    mem_limit: 8g
+
+  # Renders every docs/diagrams/*.mmd file to an SVG next to it.
+  diagrams:
+    image: minlag/mermaid-cli:11.4.2
+    volumes:
+      - ./docs/diagrams:/data
+    entrypoint:
+      - /bin/sh
+      - -c
+      - >-
+        for f in /data/*.mmd; do
+        [ -e "$$f" ] || continue;
+        /home/mermaidcli/node_modules/.bin/mmdc -p /puppeteer-config.json -i "$$f" -o "$${f%.mmd}.svg" || exit 1;
+        done
+
+volumes:
+  chromasense-data:
