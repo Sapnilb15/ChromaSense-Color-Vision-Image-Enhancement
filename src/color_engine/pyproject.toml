@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "color_engine"
+version = "1.0.0"
+description = "ChromaSense color rules and image pipeline filters"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy",
+    "Pillow",
+    "scikit-image",
+    "scikit-learn",
+]
+
+[project.optional-dependencies]
+test = ["pytest", "pytest-cov", "daltonlens"]
+
+[tool.setuptools.packages.find]
+include = ["color_engine*"]
+
+[tool.setuptools.package-data]
+color_engine = ["data/*"]

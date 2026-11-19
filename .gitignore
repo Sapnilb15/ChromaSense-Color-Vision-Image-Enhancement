@@ -1,0 +1,16 @@
+# Local configuration
+.env
+
+# Python
+__pycache__/
+*.egg-info/
+.venv/
+
+# Tools
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local session images
+data/
