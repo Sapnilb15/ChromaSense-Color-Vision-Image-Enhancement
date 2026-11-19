@@ -61,3 +61,23 @@ class Palette2:
     colors_lab: NDArray[np.float64]
     labels: NDArray[np.int32]
     counts: NDArray[np.int64]
+
+
+@dataclass(frozen=True)
+class ConfusablePair:
+    a: int
+    b: int
+    original_distance: float
+    simulated_distance: float
+
+
+@dataclass(frozen=True)
+class ConfusionResult3:
+    """Palette pairs that become confusable under the profile, their groups, and their pixels."""
+
+    palette: Palette2
+    profile: CvdProfile
+    threshold: float
+    pairs: tuple[ConfusablePair, ...]
+    groups: tuple[tuple[int, ...], ...]
+    mask: NDArray[np.bool_]

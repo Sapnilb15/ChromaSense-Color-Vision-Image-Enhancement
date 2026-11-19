@@ -14,7 +14,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | 04 | Color rules                               | CRITICAL | 🟢 green       | DaltonLens 0.18–0.19 %, at most 1 unit off; 34 of 34 Sharma pairs; coverage 98.7 % |
 | 05 | Image decode and validation (filter 1)    | Standard | 🟢 green       | All fixtures right; P3 within 2 units                                              |
 | 06 | Palette extraction (filter 2)             | Standard | 🟢 green       | Known colors within 2; runs identical; 12 MP in 2.4 s                              |
-| 07 | Confusion detection (filter 3)            | Standard | ⚪ not started |                                                                                    |
+| 07 | Confusion detection (filter 3)            | Standard | 🟢 green       | Red–green flagged (deutan 7.0, protan 1.2); red–blue not; mask exact               |
 | 08 | Targeted enhancement (filter 4)           | CRITICAL | ⚪ not started |                                                                                    |
 | 09 | Separation check (filter 5)               | Standard | ⚪ not started |                                                                                    |
 | 10 | Acceptance evaluation                     | CRITICAL | ⚪ not started |                                                                                    |
@@ -150,7 +150,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 
 **File:** `07-confusion-detection.md`  
 **SRS IDs:** SRS-FR-005  
-**Status:** ⚪ not started
+**Status:** 🟢 green
 
 | Zone   | Criterion |
 | ------ | --------- |
@@ -158,6 +158,8 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | Green  | Deutan and protan red–green flagged; red–blue not; threshold 5 vs 10 differs; mask exact |
 | Yellow | Flags right, mask off by under 1 percent of pixels |
 | Red    | A wrong flag, or the threshold has no effect |
+
+**Result:** Red–green flagged (deutan 7.0, protan 1.2); red–blue not; mask exact. Engine distances at severity 1.0: deutan red–green 71.4 → 7.0, protan red–green 61.7 → 1.2, deutan red–blue 44.0 → 63.8. Engine tests 130, coverage 97.2 %.
 
 ### 08 · Targeted enhancement (filter 4)  ⚠ CRITICAL
 
