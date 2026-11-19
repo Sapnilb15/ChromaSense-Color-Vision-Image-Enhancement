@@ -81,3 +81,12 @@ class ConfusionResult3:
     pairs: tuple[ConfusablePair, ...]
     groups: tuple[tuple[int, ...], ...]
     mask: NDArray[np.bool_]
+
+
+@dataclass(frozen=True)
+class EnhancedImage4:
+    """Enhanced pixels, each palette color's CIELAB after enhancement, and which colors moved."""
+
+    pixels: NDArray[np.uint8]
+    palette_lab_after: NDArray[np.float64]
+    changed: NDArray[np.bool_]

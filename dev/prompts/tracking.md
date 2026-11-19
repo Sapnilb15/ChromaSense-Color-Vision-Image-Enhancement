@@ -15,7 +15,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | 05 | Image decode and validation (filter 1)    | Standard | 🟢 green       | All fixtures right; P3 within 2 units                                              |
 | 06 | Palette extraction (filter 2)             | Standard | 🟢 green       | Known colors within 2; runs identical; 12 MP in 2.4 s                              |
 | 07 | Confusion detection (filter 3)            | Standard | 🟢 green       | Red–green flagged (deutan 7.0, protan 1.2); red–blue not; mask exact               |
-| 08 | Targeted enhancement (filter 4)           | CRITICAL | ⚪ not started |                                                                                    |
+| 08 | Targeted enhancement (filter 4)           | CRITICAL | 🟢 green       | 0 pixels changed outside mask; L gap 20.5 deutan, 21.9 protan; no banding          |
 | 09 | Separation check (filter 5)               | Standard | ⚪ not started |                                                                                    |
 | 10 | Acceptance evaluation                     | CRITICAL | ⚪ not started |                                                                                    |
 | 11 | Application Core and the upload use case  | CRITICAL | ⚪ not started |                                                                                    |
@@ -165,7 +165,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 
 **File:** `08-targeted-enhancement.md`  
 **SRS IDs:** SRS-FR-006, SRS-FR-007  
-**Status:** ⚪ not started
+**Status:** 🟢 green
 
 | Zone   | Criterion |
 | ------ | --------- |
@@ -173,6 +173,13 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | Green  | 0 changed pixels outside the mask; gap at least 20 |
 | Yellow | 0 outside the mask; gap 10 to 20 |
 | Red    | Any pixel changed outside the mask, or the gap shrinks |
+
+**Result:** 0 pixels changed outside the mask on flat and noisy images. CIELAB lightness gap on the flat graphics: deutan red–green 13.6 → 20.5, protan red–green 10.8 → 21.9. On a noisy image, lightness spread inside each region is unchanged (red 1.1 → 1.0, green 1.6 → 1.6). Noisy 12 megapixel image: filters 2 to 4 take about 6.4 s. Engine tests 141, coverage 98.0 %.
+
+**Notes:**
+
+- Grouped colors closer than the threshold in the original form one tier and share one shift; tiers are spaced 22 apart instead of single colors, and groups that share near-identical colors are joined first. If chaining ever puts both colors of a flagged pair into one tier, that tier falls back to single colors. *Why:* the risk recorded under 06 occurred. Without tiers, k-means sub-clusters of one noisy red were pushed apart and the lightness spread inside the red region rose from 1.1 to 8.0 (green 1.6 to 11.1), which is visible banding.
+- Moved pixels are converted through their distinct (color, palette index) combinations, and `palette_lab_after` is the count-weighted mean of those. *Why:* converting every masked pixel took 17.2 s on a noisy 12 megapixel image, most of the 30 s budget; this takes 3.8 s with identical output.
 
 ### 09 · Separation check (filter 5)
 
