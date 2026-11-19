@@ -51,3 +51,13 @@ class DecodedImage1:
     width: int
     height: int
     source_format: str
+
+
+@dataclass(frozen=True)
+class Palette2:
+    """Dominant colors, ordered by pixel count, with each pixel's palette index."""
+
+    colors_rgb: NDArray[np.uint8]
+    colors_lab: NDArray[np.float64]
+    labels: NDArray[np.int32]
+    counts: NDArray[np.int64]
