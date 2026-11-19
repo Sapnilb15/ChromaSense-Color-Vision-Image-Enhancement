@@ -2,19 +2,42 @@
 
 ChromaSense helps people with red–green color vision deficiency distinguish details in their own images. The same upload and enhancement workflow works with everyday photos, charts, maps, and other still graphics.
 
-1. Upload a PNG or JPEG.
+1. Upload a PNG or JPEG, up to 10 MB and 12 megapixels.
 2. Select a protan or deutan profile and set the severity.
 3. Compare the enhanced image with the original.
 4. Download the enhanced image as a PNG.
 
-ChromaSense detects colors likely to be confused under the selected profile and adjusts their lightness in targeted regions. Results depend on the image and the selected profile. If no useful adjustment is found, the original remains available.
+ChromaSense detects colors likely to be confused under the selected profile and adjusts their lightness in targeted regions. Results depend on the image and the selected profile. If no useful adjustment is found, the original remains available. ChromaSense does not diagnose color vision deficiency or give medical advice.
+
+## Project status
+
+This branch rebuilds ChromaSense against the November 2026 SRS, which narrows the product to the red–green enhancement workflow above. The earlier build, which included AI interpretation, speech, and low vision features, is kept for reference in [Archive/BlindSpot_ChromaSense-main](Archive/BlindSpot_ChromaSense-main/).
+
+| Stage | File | Status |
+| --- | --- | --- |
+| 1. Requirements | [dev/srs.md](dev/srs.md) | Done |
+| 2. Architecture | [dev/architecture.md](dev/architecture.md) | Done |
+| 3. Structure | [dev/structure.md](dev/structure.md) | Done |
+| 4. Prompts | [dev/prompts/](dev/prompts/) | Done: 20 increments, tracked in [tracking.md](dev/prompts/tracking.md) |
+| 5. Build | [src/](src/) | Not started |
+
+## Repository layout
+
+| Folder | Contents |
+| --- | --- |
+| [dev/](dev/) | Requirements, architecture, structure, and the prompts and guides that the agents follow |
+| [src/](src/) | Application code |
+| [docs/](docs/) | The SRS, code documentation, [user guides](docs/user-guides/), and [diagrams](docs/diagrams/) |
+| [Archive/](Archive/) | The earlier build and its documents, kept for reference |
 
 ## Run locally
 
-Install Docker with Docker Compose, then run these commands from the repository root.
+The new build in `src/` does not exist yet. Run commands for it will be added here when stage 3 is done.
+
+To run the earlier build, install Docker with Docker Compose, then run these commands from the repository root:
 
 ```bash
-cd BlindSpot_ChromaSense-main
+cd Archive/BlindSpot_ChromaSense-main
 docker compose build
 docker compose up portal
 ```
@@ -29,7 +52,8 @@ The release target is improved simulated separation for at least 80% of eligible
 
 ## Project documents
 
-- [Software Requirements Specification](docs/ChromaSense_SRS.docx)
+- [Software Requirements Specification (docx)](docs/ChromaSense_SRS.docx), with its working copy in [dev/srs.md](dev/srs.md)
+- [Architecture](dev/architecture.md)
 - [Team roles and deliverables](TEAM_ROLES.md)
-- [Existing enhancement benchmark](BlindSpot_ChromaSense-main/docs/enhancement-evaluation.md)
-- [Portal setup and test commands](BlindSpot_ChromaSense-main/README.md)
+- [Earlier enhancement benchmark](Archive/BlindSpot_ChromaSense-main/docs/enhancement-evaluation.md)
+- [Earlier build setup and test commands](Archive/BlindSpot_ChromaSense-main/README.md)
