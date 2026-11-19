@@ -1,9 +1,0 @@
-{
-  "name": "ChromaSense",
-  "dockerComposeFile": "../docker-compose.yml",
-  "service": "dev",
-  "runServices": ["dev"],
-  "workspaceFolder": "/workspace",
-  "overrideCommand": true,
-  "shutdownAction": "stopCompose"
-}

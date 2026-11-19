@@ -8,7 +8,7 @@
 
 - Create folders, package markers, and project metadata only. Write no application behavior.
 - Use only paths from the directory tree in **section 6 of `00-master-context.md`**.
-- Do not touch `Archive/`, `dev/`, `docs/ChromaSense_SRS.docx`, or `TEAM_ROLES.md`.
+- Do not touch `dev/`, `CHANGELOG.md`, `docs/ChromaSense_SRS.docx`, or `TEAM_ROLES.md`.
 
 ### Capability
 
@@ -21,7 +21,7 @@ The two Python packages exist and install: `color_engine` and `chromasense`.
 
 ### What must stay
 
-- `README.md`, `TEAM_ROLES.md`, `Archive/`, `dev/`, and `docs/ChromaSense_SRS.docx` are unchanged.
+- `README.md`, `CHANGELOG.md`, `TEAM_ROLES.md`, `dev/`, and `docs/ChromaSense_SRS.docx` are unchanged.
 
 ### Implementation notes
 
@@ -35,7 +35,7 @@ The two Python packages exist and install: `color_engine` and `chromasense`.
    CHROMASENSE_PALETTE_COLORS=12
    CHROMASENSE_IDLE_MINUTES=30
    ```
-   The palette color count of 12 is `derived` from the archived build.
+   The palette color count of 12 is `derived` from release 0.5.
 5. Add `__init__.py` to every package folder in the tree, including each `filter_<N>_<name>/` directory and `web_api/routers/`.
 
 ### Verification
@@ -48,4 +48,4 @@ The two Python packages exist and install: `color_engine` and `chromasense`.
 
 - Create folders, package markers, and project metadata only. Write no application behavior.
 - Use only paths from the directory tree.
-- Do not touch `Archive/`, `dev/`, `docs/ChromaSense_SRS.docx`, or `TEAM_ROLES.md`.
+- Do not touch `dev/`, `CHANGELOG.md`, `docs/ChromaSense_SRS.docx`, or `TEAM_ROLES.md`.

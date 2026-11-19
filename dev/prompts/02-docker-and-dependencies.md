@@ -8,7 +8,7 @@
 
 - Add only build and container files. Write no application behavior.
 - The base image is Python 3.11. The portal listens on port 9090.
-- `Archive/`, `dev/`, `docs/`, and `.git/` never enter the Docker build context.
+- `dev/`, `docs/`, and `.git/` never enter the Docker build context.
 
 ### Capability
 
@@ -33,7 +33,7 @@
    - `portal`: target `runtime`, port `"9090:9090"`, optional `.env`, `CHROMASENSE_DATA_DIR=/data`, a named volume at `/data`, `cpus: 4`, `mem_limit: 8g`.
    - `dev`: target `dev`, `working_dir: /workspace`, the repository mounted at `/workspace`, `CHROMASENSE_DATA_DIR=/data`, and the same `cpus: 4` and `mem_limit: 8g` as `portal`, so timing tests run on the reference host.
    - `diagrams`: image `minlag/mermaid-cli:11.4.2`, `./docs/diagrams` mounted at `/data`, and an entrypoint that runs `mmdc -i <name>.mmd -o <name>.svg` for every `.mmd` file in `/data`. It builds nothing and is not a dependency of `portal`.
-3. **`.dockerignore`**: `Archive/`, `dev/`, `docs/`, `.git/`, `.env`, caches, and `data/`.
+3. **`.dockerignore`**: `dev/`, `docs/`, `.git/`, `.env`, caches, and `data/`.
 4. **`.devcontainer/devcontainer.json`**: uses `docker-compose.yml`, service `dev`, workspace folder `/workspace`, and the Python and Ruff extensions.
 5. The `engine-test` target has no tests to collect until increment 04, and `pytest` exits with code 5. Do not add placeholder tests. Check this target in increment 04.
 
@@ -48,4 +48,4 @@
 
 - Add only build and container files. Write no application behavior.
 - The base image is Python 3.11. The portal listens on port 9090.
-- `Archive/`, `dev/`, `docs/`, and `.git/` never enter the Docker build context.
+- `dev/`, `docs/`, and `.git/` never enter the Docker build context.

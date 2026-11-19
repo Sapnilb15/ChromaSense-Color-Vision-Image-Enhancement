@@ -9,9 +9,16 @@ ChromaSense helps people with red–green color vision deficiency distinguish de
 
 ChromaSense detects colors likely to be confused under the selected profile and adjusts their lightness in targeted regions. Results depend on the image and the selected profile. If no useful adjustment is found, the original remains available. ChromaSense does not diagnose color vision deficiency or give medical advice.
 
-## Project status
+## Releases
 
-This branch rebuilds ChromaSense against the November 2026 SRS, which narrows the product to the red–green enhancement workflow above. The earlier build, which included AI interpretation, speech, and low vision features, is kept for reference in [Archive/BlindSpot_ChromaSense-main](Archive/BlindSpot_ChromaSense-main/).
+| Release | Where | What it is |
+| --- | --- | --- |
+| 1.0 | This branch (`refactorForSRS`), tagged `v1.0` when the build is complete | The red–green enhancement workflow above, built against the [November 2026 SRS](docs/ChromaSense_SRS.docx) |
+| 0.5 | Git tag [`v0.5`](../../tree/v0.5) | The earlier AI color accessibility portal, with AI interpretation, speech, low vision features, and four CVD types |
+
+[CHANGELOG.md](CHANGELOG.md) lists what changed between 0.5 and 1.0.
+
+## Release 1.0 status
 
 | Stage | File | Status |
 | --- | --- | --- |
@@ -28,21 +35,21 @@ This branch rebuilds ChromaSense against the November 2026 SRS, which narrows th
 | [dev/](dev/) | Requirements, architecture, structure, and the prompts and guides that the agents follow |
 | [src/](src/) | Application code |
 | [docs/](docs/) | The SRS, code documentation, [user guides](docs/user-guides/), and [diagrams](docs/diagrams/) |
-| [Archive/](Archive/) | The earlier build and its documents, kept for reference |
 
 ## Run locally
 
-The new build in `src/` does not exist yet. Run commands for it will be added here when stage 3 is done.
+Release 1.0 in `src/` is not built yet. Its run commands will be added here when the build is complete.
 
-To run the earlier build, install Docker with Docker Compose, then run these commands from the repository root:
+To run release 0.5, install Docker with Docker Compose. Then check out the tag in a separate folder, so it stays apart from the 1.0 work:
 
 ```bash
-cd Archive/BlindSpot_ChromaSense-main
+git worktree add ../chromasense-v0.5 v0.5
+cd ../chromasense-v0.5/BlindSpot_ChromaSense-main
 docker compose build
 docker compose up portal
 ```
 
-Open [ChromaSense on localhost](http://localhost:9090). Image enhancement runs on the server and works without an AI provider or API key.
+Open [ChromaSense on localhost](http://localhost:9090). Image enhancement runs on the server and works without an AI provider or API key. When you are done, remove the folder with `git worktree remove ../chromasense-v0.5`.
 
 ## Evaluate the result
 
@@ -54,6 +61,6 @@ The release target is improved simulated separation for at least 80% of eligible
 
 - [Software Requirements Specification (docx)](docs/ChromaSense_SRS.docx), with its working copy in [dev/srs.md](dev/srs.md)
 - [Architecture](dev/architecture.md)
+- [Changelog](CHANGELOG.md)
 - [Team roles and deliverables](TEAM_ROLES.md)
-- [Earlier enhancement benchmark](Archive/BlindSpot_ChromaSense-main/docs/enhancement-evaluation.md)
-- [Earlier build setup and test commands](Archive/BlindSpot_ChromaSense-main/README.md)
+- [Release 0.5 enhancement benchmark](docs/enhancement-evaluation-v0.5.md)

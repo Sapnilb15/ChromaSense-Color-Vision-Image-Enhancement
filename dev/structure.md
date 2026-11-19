@@ -18,15 +18,16 @@ ChromaSense-Color-Vision-Image-Enhancement/
 ├── .dockerignore
 ├── .env.example
 ├── .gitignore
+├── CHANGELOG.md
 ├── Dockerfile
 ├── README.md
 ├── TEAM_ROLES.md
 ├── docker-compose.yml
-├── Archive/                      (existing, read only)
 ├── dev/                          (existing)
 ├── docs/
 │   ├── ChromaSense_SRS.docx
 │   ├── acceptance-results.md
+│   ├── enhancement-evaluation-v0.5.md
 │   ├── code/
 │   │   ├── color-engine.md
 │   │   └── portal.md
@@ -157,13 +158,15 @@ One row for each top-level folder or important file. The part must be a name fro
 | --- | --- | --- |
 | `.devcontainer/` | Server Main | Team dev container, using the `dev` target |
 | `.github/workflows/ci.yml` | Server Main | Pull request checks: lint, format, dependency rules, engine tests without FastAPI, and portal tests |
-| `.dockerignore` | Server Main | Keeps `Archive/`, `dev/`, `docs/`, and `.git/` out of the build context |
+| `.dockerignore` | Server Main | Keeps `dev/`, `docs/`, and `.git/` out of the build context |
 | `.env.example` | Server Main | Configuration names with defaults and no secrets: data folder, confusion threshold (10), palette color count, and idle session minutes (30) |
 | `.gitignore` | Server Main | Ignores `.env`, caches, coverage output, and local session data |
 | `Dockerfile` | Server Main | Multi-stage build with `engine-test`, `dev`, and `runtime` targets on Python 3.11 |
 | `docker-compose.yml` | Server Main | `portal` service on port 9090 with 4 CPUs and 8 GB, `dev` service for checks, `diagrams` service that renders `docs/diagrams/*.mmd` to SVG, and the session data volume |
+| `CHANGELOG.md` | Server Main | Changes between releases, starting with 1.0 against 0.5 |
 | `README.md` | Server Main | What the app does, how to start it, and how to reach it from another device on the local network |
 | `docs/ChromaSense_SRS.docx` | Server Main | The source SRS. Do not edit |
+| `docs/enhancement-evaluation-v0.5.md` | Color Engine | The release 0.5 comparison of enhancement methods that Decision 2 relies on. Do not edit |
 | `docs/acceptance-results.md` | Color Engine | Improved and eligible pair counts by profile and image type, newly confusable pairs, changes outside target regions, and the threshold and severity used |
 | `docs/code/` | Color Engine, Application Core | Developer notes for each Python package: public functions, filter order, and how to run its tests |
 | `docs/diagrams/*.mmd` | Server Main | Mermaid sources for the context, container, and pipeline diagrams, kept in step with `dev/architecture.md` |
@@ -270,7 +273,7 @@ The commands to run after the last increment. The first command must succeed.
 Checks for this stack. The implementation agent uses this list before it invents a fix.
 
 1. Docker: confirm that the Docker daemon is running, that the base image is Python 3.11, and that the `Dockerfile` target names match `docker-compose.yml`.
-2. Build context: confirm that `.dockerignore` excludes `Archive/`. Do not import or copy files from `Archive/` at build or run time.
+2. Build context: confirm that `.dockerignore` excludes `dev/` and `docs/`. Release 0.5 code is reached only through the `v0.5` git tag. Do not add a copy of it to the working tree.
 3. Install order: confirm that the image installs `src/color_engine` before `src/portal`, and that `src/color_engine/pyproject.toml` lists `data/*` as package data.
 4. Imports: if `lint-imports` fails, fix the import that points outward. Do not edit the contract. Numbered directories must keep the `filter_<N>_<name>` form, because names such as `1-decode` cannot be imported.
 5. Decode: if a truncated JPEG decodes without error, confirm that `PIL.ImageFile.LOAD_TRUNCATED_IMAGES` is `False` and that `Image.load()` runs inside `decode_1`. If a large image is slow to reject, check the pixel count before `Image.load()`.

@@ -172,15 +172,15 @@ Record one to three decisions that you already made. Delete the unused decision 
 ### Decision 1
 
 - **Context**: The color rules must stay testable on their own and reusable for the acceptance evaluation, while the web layer may change. Each enhancement runs a fixed sequence of image stages.
-- **Decision**: Use Clean Architecture for the overall structure and Pipe and Filter for the pipeline, as in the archived build, reduced to the parts above. Render pages on the server with semantic HTML and add plain JavaScript only for upload, the severity slider, the comparison slider, live status messages, and the page-close beacon.
+- **Decision**: Use Clean Architecture for the overall structure and Pipe and Filter for the pipeline, as in release 0.5, reduced to the parts above. Render pages on the server with semantic HTML and add plain JavaScript only for upload, the severity slider, the comparison slider, live status messages, and the page-close beacon.
 - **Rejected**: Pipeline logic in request handlers, because it ties the color rules to the framework and the evaluation could not run them directly. A single-page application framework, because it adds a build step and makes focus and announcement behavior harder to keep correct.
 - **SRS IDs**: SRS-FR-004, SRS-FR-008, SRS-FR-011, SRS-NFR-002, SRS-NFR-003
 
 ### Decision 2
 
-- **Context**: The SRS states the outcome of detection and enhancement but not the method, and the 80 percent target needs a fixed way to measure simulated separation. The archived evaluation (`Archive/BlindSpot_ChromaSense-main/docs/enhancement-evaluation.md`) compared three enhancement methods.
-- **Decision**: Simulate protan and deutan with the Machado (2009) model in linear RGB, interpolated by severity. Extract the palette with k-means in CIELAB. Measure separation as the CIEDE2000 distance between simulated colors. A pair is eligible when it is confusable under the default threshold of 10, and it is improved when its simulated distance after enhancement is greater than before. Enhance with lightness separation, which reduced confusable pairs by 94.8 percent in the archived evaluation and moves only lightness inside the mask. The threshold, color count, and severity used in each evaluation run are recorded with the results.
-- **Rejected**: Targeted daltonization and hue rotation, which removed fewer pairs in the archived evaluation. A global filter, because it would change pixels outside the targeted regions.
+- **Context**: The SRS states the outcome of detection and enhancement but not the method, and the 80 percent target needs a fixed way to measure simulated separation. The release 0.5 evaluation (`docs/enhancement-evaluation-v0.5.md`) compared three enhancement methods.
+- **Decision**: Simulate protan and deutan with the Machado (2009) model in linear RGB, interpolated by severity. Extract the palette with k-means in CIELAB. Measure separation as the CIEDE2000 distance between simulated colors. A pair is eligible when it is confusable under the default threshold of 10, and it is improved when its simulated distance after enhancement is greater than before. Enhance with lightness separation, which reduced confusable pairs by 94.8 percent in the release 0.5 evaluation and moves only lightness inside the mask. The threshold, color count, and severity used in each evaluation run are recorded with the results.
+- **Rejected**: Targeted daltonization and hue rotation, which removed fewer pairs in the release 0.5 evaluation. A global filter, because it would change pixels outside the targeted regions.
 - **SRS IDs**: SRS-FR-005, SRS-FR-006, SRS-FR-007, SRS-FR-009, SRS-NFR-001, SRS-NFR-007
 
 ### Decision 3

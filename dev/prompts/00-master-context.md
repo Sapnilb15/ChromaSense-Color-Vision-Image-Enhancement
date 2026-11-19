@@ -8,7 +8,7 @@ Reload this file at the start of every implementation session. It is not an impl
 - Add no requirement, part, screen, folder, endpoint, or behavior that the user files do not name.
 - Follow the parts, hard constraints, and decisions in `dev/architecture.md` and the tree in `dev/structure.md`.
 - Run one increment at a time, in file order, and update `dev/prompts/tracking.md` after each one.
-- `Archive/` is read only. You may read archived code to port it, but the new code must follow the new contracts, and nothing may import or copy from `Archive/` at build or run time.
+- Release 0.5 lives only in the `v0.5` git tag. You may read its code with `git show v0.5:<path>` to port it, but the new code must follow the new contracts. Do not check out or copy the 0.5 tree into the working tree.
 
 ## 1. Domain background
 
@@ -117,15 +117,15 @@ flowchart TB
 ### Decision 1
 
 - **Context**: The color rules must stay testable on their own and reusable for the acceptance evaluation, while the web layer may change. Each enhancement runs a fixed sequence of image stages.
-- **Decision**: Use Clean Architecture for the overall structure and Pipe and Filter for the pipeline, as in the archived build, reduced to the parts above. Render pages on the server with semantic HTML and add plain JavaScript only for upload, the severity slider, the comparison slider, live status messages, and the page-close beacon.
+- **Decision**: Use Clean Architecture for the overall structure and Pipe and Filter for the pipeline, as in release 0.5, reduced to the parts above. Render pages on the server with semantic HTML and add plain JavaScript only for upload, the severity slider, the comparison slider, live status messages, and the page-close beacon.
 - **Rejected**: Pipeline logic in request handlers, because it ties the color rules to the framework and the evaluation could not run them directly. A single-page application framework, because it adds a build step and makes focus and announcement behavior harder to keep correct.
 - **SRS IDs**: SRS-FR-004, SRS-FR-008, SRS-FR-011, SRS-NFR-002, SRS-NFR-003
 
 ### Decision 2
 
-- **Context**: The SRS states the outcome of detection and enhancement but not the method, and the 80 percent target needs a fixed way to measure simulated separation. The archived evaluation (`Archive/BlindSpot_ChromaSense-main/docs/enhancement-evaluation.md`) compared three enhancement methods.
-- **Decision**: Simulate protan and deutan with the Machado (2009) model in linear RGB, interpolated by severity. Extract the palette with k-means in CIELAB. Measure separation as the CIEDE2000 distance between simulated colors. A pair is eligible when it is confusable under the default threshold of 10, and it is improved when its simulated distance after enhancement is greater than before. Enhance with lightness separation, which reduced confusable pairs by 94.8 percent in the archived evaluation and moves only lightness inside the mask. The threshold, color count, and severity used in each evaluation run are recorded with the results.
-- **Rejected**: Targeted daltonization and hue rotation, which removed fewer pairs in the archived evaluation. A global filter, because it would change pixels outside the targeted regions.
+- **Context**: The SRS states the outcome of detection and enhancement but not the method, and the 80 percent target needs a fixed way to measure simulated separation. The release 0.5 evaluation (`docs/enhancement-evaluation-v0.5.md`) compared three enhancement methods.
+- **Decision**: Simulate protan and deutan with the Machado (2009) model in linear RGB, interpolated by severity. Extract the palette with k-means in CIELAB. Measure separation as the CIEDE2000 distance between simulated colors. A pair is eligible when it is confusable under the default threshold of 10, and it is improved when its simulated distance after enhancement is greater than before. Enhance with lightness separation, which reduced confusable pairs by 94.8 percent in the release 0.5 evaluation and moves only lightness inside the mask. The threshold, color count, and severity used in each evaluation run are recorded with the results.
+- **Rejected**: Targeted daltonization and hue rotation, which removed fewer pairs in the release 0.5 evaluation. A global filter, because it would change pixels outside the targeted regions.
 - **SRS IDs**: SRS-FR-005, SRS-FR-006, SRS-FR-007, SRS-FR-009, SRS-NFR-001, SRS-NFR-007
 
 ### Decision 3
@@ -304,15 +304,16 @@ ChromaSense-Color-Vision-Image-Enhancement/
 ├── .dockerignore
 ├── .env.example
 ├── .gitignore
+├── CHANGELOG.md
 ├── Dockerfile
 ├── README.md
 ├── TEAM_ROLES.md
 ├── docker-compose.yml
-├── Archive/                      (existing, read only)
 ├── dev/                          (existing)
 ├── docs/
 │   ├── ChromaSense_SRS.docx
 │   ├── acceptance-results.md
+│   ├── enhancement-evaluation-v0.5.md
 │   ├── code/
 │   │   ├── color-engine.md
 │   │   └── portal.md
@@ -441,13 +442,15 @@ ChromaSense-Color-Vision-Image-Enhancement/
 | --- | --- | --- |
 | `.devcontainer/` | Server Main | Team dev container, using the `dev` target |
 | `.github/workflows/ci.yml` | Server Main | Pull request checks: lint, format, dependency rules, engine tests without FastAPI, and portal tests |
-| `.dockerignore` | Server Main | Keeps `Archive/`, `dev/`, `docs/`, and `.git/` out of the build context |
+| `.dockerignore` | Server Main | Keeps `dev/`, `docs/`, and `.git/` out of the build context |
 | `.env.example` | Server Main | Configuration names with defaults and no secrets: data folder, confusion threshold (10), palette color count, and idle session minutes (30) |
 | `.gitignore` | Server Main | Ignores `.env`, caches, coverage output, and local session data |
 | `Dockerfile` | Server Main | Multi-stage build with `engine-test`, `dev`, and `runtime` targets on Python 3.11 |
 | `docker-compose.yml` | Server Main | `portal` service on port 9090 with 4 CPUs and 8 GB, `dev` service for checks, `diagrams` service that renders `docs/diagrams/*.mmd` to SVG, and the session data volume |
+| `CHANGELOG.md` | Server Main | Changes between releases, starting with 1.0 against 0.5 |
 | `README.md` | Server Main | What the app does, how to start it, and how to reach it from another device on the local network |
 | `docs/ChromaSense_SRS.docx` | Server Main | The source SRS. Do not edit |
+| `docs/enhancement-evaluation-v0.5.md` | Color Engine | The release 0.5 comparison of enhancement methods that Decision 2 relies on. Do not edit |
 | `docs/acceptance-results.md` | Color Engine | Improved and eligible pair counts by profile and image type, newly confusable pairs, changes outside target regions, and the threshold and severity used |
 | `docs/code/` | Color Engine, Application Core | Developer notes for each Python package: public functions, filter order, and how to run its tests |
 | `docs/diagrams/*.mmd` | Server Main | Mermaid sources for the context, container, and pipeline diagrams, kept in step with `dev/architecture.md` |
@@ -548,7 +551,7 @@ ChromaSense-Color-Vision-Image-Enhancement/
 ### If the build fails
 
 1. Docker: confirm that the Docker daemon is running, that the base image is Python 3.11, and that the `Dockerfile` target names match `docker-compose.yml`.
-2. Build context: confirm that `.dockerignore` excludes `Archive/`. Do not import or copy files from `Archive/` at build or run time.
+2. Build context: confirm that `.dockerignore` excludes `dev/` and `docs/`. Release 0.5 code is reached only through the `v0.5` git tag. Do not add a copy of it to the working tree.
 3. Install order: confirm that the image installs `src/color_engine` before `src/portal`, and that `src/color_engine/pyproject.toml` lists `data/*` as package data.
 4. Imports: if `lint-imports` fails, fix the import that points outward. Do not edit the contract. Numbered directories must keep the `filter_<N>_<name>` form, because names such as `1-decode` cannot be imported.
 5. Decode: if a truncated JPEG decodes without error, confirm that `PIL.ImageFile.LOAD_TRUNCATED_IMAGES` is `False` and that `Image.load()` runs inside `decode_1`. If a large image is slow to reject, check the pixel count before `Image.load()`.

@@ -26,8 +26,8 @@ The engine moves the CIELAB lightness of each confusable color group apart, insi
 ### Implementation notes
 
 1. `@dataclass(frozen=True) class EnhancedImage4` (`derived`): `pixels: NDArray` (`uint8`, same shape as the input), `palette_lab_after: NDArray` (K × 3; for each palette index, the mean CIELAB of its enhanced pixels if the color moved, otherwise its original palette color), `changed: NDArray` (K `bool`, true for palette indexes that moved).
-2. Method, from `Archive/BlindSpot_ChromaSense-main/docs/enhancement-evaluation.md`: within each group in `confusion.groups`, space the colors 22 CIELAB lightness units apart, between 15 and 90. Avoid the lightness of colors outside the group first, then move each color as little as possible. Add the shift to the `L` channel of each masked pixel of that color and keep its `a` and `b`.
-3. You may port `Archive/BlindSpot_ChromaSense-main/src/color_engine/color_engine/pipeline/filter_9_enhance/enhance_9.py`. Remove its `strength` argument, and use a fixed strength of 1.0.
+2. Method, from `docs/enhancement-evaluation-v0.5.md`: within each group in `confusion.groups`, space the colors 22 CIELAB lightness units apart, between 15 and 90. Avoid the lightness of colors outside the group first, then move each color as little as possible. Add the shift to the `L` channel of each masked pixel of that color and keep its `a` and `b`.
+3. You may port release 0.5's code with `git show v0.5:BlindSpot_ChromaSense-main/src/color_engine/color_engine/pipeline/filter_9_enhance/enhance_9.py`. Remove its `strength` argument, and use a fixed strength of 1.0.
 4. Convert only the masked pixels of colors that moved back to sRGB. Copy every other pixel from the input unchanged, including masked pixels whose shift is zero, so color conversion round-off cannot alter them.
 5. With no flagged pairs, return the input pixels unchanged and `changed` all false.
 

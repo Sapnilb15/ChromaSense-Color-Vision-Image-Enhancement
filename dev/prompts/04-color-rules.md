@@ -28,12 +28,12 @@ Color Engine can convert color spaces, simulate a protan or deutan profile at an
    - `class CvdType(Enum)`: `PROTAN = "protan"`, `DEUTAN = "deutan"`.
    - `@dataclass(frozen=True) class CvdProfile`: `type: CvdType`, `severity: float`. Raise `ValueError` if severity is outside 0 to 1.
    - `@dataclass(frozen=True) class InputLimits`: `max_bytes: int = 10 * 1024 * 1024`, `max_megapixels: float = 12.0`.
-2. **`data/machado_2009.json`**: copy the file from `Archive/BlindSpot_ChromaSense-main/src/color_engine/color_engine/data/machado_2009.json`. It holds the `protan` and `deutan` 3×3 matrices at severity 0.0 to 1.0 in steps of 0.1. Load it with `importlib.resources`.
+2. **`data/machado_2009.json`**: copy it from release 0.5: `git show v0.5:BlindSpot_ChromaSense-main/src/color_engine/color_engine/data/machado_2009.json > src/color_engine/color_engine/data/machado_2009.json`. It holds the `protan` and `deutan` 3×3 matrices at severity 0.0 to 1.0 in steps of 0.1. Load it with `importlib.resources`.
 3. **`rules/color_spaces.py`**: `srgb_to_linear(pixels)` and `linear_to_srgb(pixels)` on floats from 0 to 1, with the standard sRGB transfer function. Also `rgb_to_lab(pixels_uint8)` and `lab_to_rgb(lab)`, using `skimage.color.rgb2lab` and `lab2rgb`, returning `uint8` for `lab_to_rgb` with rounding and clipping.
 4. **`rules/simulation.py`**: `simulate(pixels: NDArray, profile: CvdProfile) -> NDArray`. Input and output are `uint8` sRGB of the same shape. Linearize, apply the matrix interpolated linearly between the two nearest 0.1 steps, clip to 0 to 1, and re-encode. Severity 0 returns the input unchanged.
 5. **`rules/distance.py`**: `ciede2000(lab_a, lab_b) -> NDArray | float` using `skimage.color.deltaE_ciede2000`, accepting single colors or arrays of colors.
 6. **`rules/encode.py`**: `encode_png(pixels: NDArray) -> bytes` using `Image.fromarray(pixels, "RGB").save(buffer, format="PNG")`.
-7. You may read the archived rules in `Archive/BlindSpot_ChromaSense-main/src/color_engine/color_engine/rules/` and port them. Remove tritan, achromatopsia, naming, and overlay code.
+7. You may read the release 0.5 rules with `git show v0.5:BlindSpot_ChromaSense-main/src/color_engine/color_engine/rules/<file>.py` and port them. Remove tritan, achromatopsia, naming, and overlay code.
 
 ### Verification
 

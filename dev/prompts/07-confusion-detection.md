@@ -32,7 +32,7 @@ The engine finds which palette color pairs become hard to tell apart under the s
 
 ### Verification
 
-These test colors were measured with the archived Machado matrices at severity 1.0:
+These test colors were measured with the release 0.5 Machado matrices at severity 1.0:
 
 | Pair | Original CIEDE2000 | Simulated CIEDE2000 |
 | --- | --- | --- |

@@ -22,7 +22,7 @@ The repository explains how to use, run, and develop ChromaSense, with Mermaid a
 
 ### What must stay
 
-- `docs/ChromaSense_SRS.docx`, `docs/acceptance-results.md`, `TEAM_ROLES.md`, `Archive/`, and `dev/`.
+- `docs/ChromaSense_SRS.docx`, `docs/acceptance-results.md`, `docs/enhancement-evaluation-v0.5.md`, `CHANGELOG.md`, `TEAM_ROLES.md`, and `dev/`.
 
 ### Implementation notes
 
@@ -34,7 +34,7 @@ The repository explains how to use, run, and develop ChromaSense, with Mermaid a
 2. `docs/code/color-engine.md`: the five filters with their contracts, the color rules, the threshold and severity defaults, and how to run the engine tests and the acceptance test.
 3. `docs/code/portal.md`: the parts, the use cases, the endpoint table from increment 15, the session lifecycle from Decision 3, and the settings with their environment names.
 4. `docs/user-guides/user-guide.md`: the four steps, the input limits, what each status message means, how to compare, how to download, and how to reach the app from another device on the local network. Include the statement from the page footer.
-5. `README.md` "Run locally": `docker compose build`, `docker compose up portal`, then open `http://localhost:9090` or `http://<host-ip>:9090`. Keep the link to the archived build under project documents.
+5. `README.md` "Run locally": `docker compose build`, `docker compose up portal`, then open `http://localhost:9090` or `http://<host-ip>:9090`. Keep the Releases section and its link to the `v0.5` tag.
 
 ### Verification
 
