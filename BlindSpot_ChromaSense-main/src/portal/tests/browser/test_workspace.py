@@ -113,8 +113,9 @@ def test_overlay_control_adds_and_removes_the_patterns(page, portal, tmp_path):
 
 def test_download_saves_a_file_that_opens_as_the_enhanced_image(page, portal, tmp_path):
     _open(page, portal, tmp_path)
+    page.locator("#download-link").focus()
     with page.expect_download() as download:
-        page.locator("#download-link").click()
+        page.keyboard.press("Enter")
     target = tmp_path / "saved.png"
     download.value.save_as(target)
     with Image.open(target) as saved:

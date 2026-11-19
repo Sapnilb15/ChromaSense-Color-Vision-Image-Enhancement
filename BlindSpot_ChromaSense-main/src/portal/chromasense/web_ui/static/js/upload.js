@@ -3,6 +3,7 @@ window.ChromaSense = window.ChromaSense || {};
 
 (function setUpUpload() {
   let pendingFile = null;
+  let uploading = false;
 
   function showError(message) {
     const element = document.getElementById("upload-error");
@@ -35,6 +36,7 @@ window.ChromaSense = window.ChromaSense || {};
   }
 
   async function upload(file, profile) {
+    uploading = true;
     showError("");
     ChromaSense.announce("Uploading the image, and starting the analysis pipeline.");
     const form = new FormData();
@@ -55,6 +57,8 @@ window.ChromaSense = window.ChromaSense || {};
       const message = "The upload could not reach the server. Try again.";
       showError(message);
       ChromaSense.announce(`Upload failed. ${message}`);
+    } finally {
+      uploading = false;
     }
   }
 
@@ -66,7 +70,7 @@ window.ChromaSense = window.ChromaSense || {};
   }
 
   function startUpload(file) {
-    if (!file) {
+    if (!file || uploading) {
       return;
     }
     const profile = ChromaSense.profile.get();
@@ -125,7 +129,11 @@ window.ChromaSense = window.ChromaSense || {};
     const zone = document.getElementById("drop-zone");
     startDialog();
 
-    fileInput.addEventListener("change", () => startUpload(fileInput.files[0]));
+    fileInput.addEventListener("change", () => {
+      const file = fileInput.files[0];
+      fileInput.value = "";
+      startUpload(file);
+    });
 
     ["dragenter", "dragover"].forEach((name) =>
       zone.addEventListener(name, (event) => {

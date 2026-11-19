@@ -137,10 +137,11 @@ def test_prompt_needs_a_choice_and_can_be_canceled(new_page, portal, tmp_path):
     assert "/workspace/" not in page.url
 
 
-def test_slider_reaches_both_ends_and_the_value_is_sent(new_page, portal, tmp_path):
+@pytest.mark.parametrize("profile", ["Protan", "Deutan"])
+def test_slider_reaches_both_ends_and_the_value_is_sent(new_page, portal, tmp_path, profile):
     page = new_page()
     page.goto(f"{portal.url}/settings")
-    page.get_by_label("Deutan").check()
+    page.get_by_label(profile).check()
     slider = page.locator("#settings-severity")
     assert (slider.get_attribute("min"), slider.get_attribute("max")) == ("0", "1")
     for value in ("0", "1", "0.35"):
@@ -150,7 +151,7 @@ def test_slider_reaches_both_ends_and_the_value_is_sent(new_page, portal, tmp_pa
     page.goto(portal.url)
     upload_file(page, write_image(tmp_path, "known.png", known_graphic()))
     wait_for_workspace(page)
-    assert upload_fields(page) == {"cvd_type": "deutan", "severity": "0.35"}
+    assert upload_fields(page) == {"cvd_type": profile.lower(), "severity": "0.35"}
 
 
 def test_with_no_cvd_the_slider_is_disabled_and_no_severity_is_sent(new_page, portal, tmp_path):
@@ -226,6 +227,20 @@ def test_failed_upload_announces_failure_and_focus_stays(page, portal, tmp_path)
     messages = live_messages(page)
     assert any(message.startswith("Uploading") for message in messages)
     assert any(message.startswith("Upload failed") for message in messages)
+
+
+def test_selected_file_can_be_retried_after_a_connection_failure(page, portal, tmp_path):
+    page.goto(portal.url)
+    path = write_image(tmp_path, "known.png", known_graphic())
+    page.route("**/api/images", lambda route: route.abort(), times=1)
+
+    upload_file(page, path)
+    page.locator("#upload-error").wait_for(state="visible")
+    assert page.locator("#file-input").input_value() == ""
+
+    upload_file(page, path)
+    _shown_in_workspace(page)
+    assert not page.locator("#upload-error").is_visible()
 
 
 def test_a_direct_visit_renders_the_same_workspace(page, portal, tmp_path):
