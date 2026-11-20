@@ -1,0 +1,17 @@
+flowchart LR
+  upload["Upload bytes"]
+  f1["Filter 1: decode_1<br/>check type, size, pixels;<br/>orient; convert to sRGB"]
+  f2["Filter 2: extract_palette_2<br/>k-means colors in CIELAB"]
+  f3["Filter 3: detect_confusion_3<br/>pairs confusable under the profile"]
+  f4["Filter 4: enhance_4<br/>separate lightness inside the mask"]
+  f5["Filter 5: check_separation_5<br/>did simulated separation grow?"]
+  outcome["Outcome and message"]
+  stored[("Stored palette<br/>for this image")]
+  upload --> f1
+  f1 -->|"DecodedImage1"| f2
+  f2 -->|"Palette2"| f3
+  f3 -->|"ConfusionResult3"| f4
+  f4 -->|"EnhancedImage4"| f5
+  f5 -->|"SeparationReport5"| outcome
+  f2 -.->|"saved with the result"| stored
+  stored -.->|"reused when only the profile changes"| f3

@@ -26,7 +26,7 @@ ChromaSense detects colors likely to be confused under the selected profile and 
 | 2. Architecture | [dev/architecture.md](dev/architecture.md) | Done |
 | 3. Structure | [dev/structure.md](dev/structure.md) | Done |
 | 4. Prompts | [dev/prompts/](dev/prompts/) | Done: 20 increments, tracked in [tracking.md](dev/prompts/tracking.md) |
-| 5. Build | [src/](src/) | Not started |
+| 5. Build | [src/](src/) | Done: all 20 increments; increment 10 is waiting for the held-out test images, and a manual screen reader run is still to do |
 
 ## Repository layout
 
@@ -38,9 +38,32 @@ ChromaSense detects colors likely to be confused under the selected profile and 
 
 ## Run locally
 
-Release 1.0 in `src/` is not built yet. Its run commands will be added here when the build is complete.
+Install Docker with Docker Compose, then run these commands from the repository root:
 
-To run release 0.5, install Docker with Docker Compose. Then check out the tag in a separate folder, so it stays apart from the 1.0 work:
+```bash
+docker compose build
+docker compose up portal
+```
+
+Open [ChromaSense on localhost](http://localhost:9090). To use it from a phone or another computer on the same network, open `http://<host-ip>:9090`; the [user guide](docs/user-guides/user-guide.md#open-chromasense) shows how to find the address. ChromaSense has no sign-in and uses plain HTTP, so keep it on your local network.
+
+Optional settings go in a `.env` file; [`.env.example`](.env.example) lists them with their defaults.
+
+### Checks
+
+```bash
+docker build --target engine-test .
+docker compose run --rm dev ruff check .
+docker compose run --rm dev ruff format --check .
+docker compose run --rm dev lint-imports --config src/portal/pyproject.toml
+docker compose run --rm dev pytest src/color_engine/tests --cov=color_engine --cov-fail-under=70
+docker compose run --rm dev pytest src/portal/tests
+docker compose run --rm diagrams
+```
+
+### Release 0.5
+
+To run release 0.5, check out the tag in a separate folder, so it stays apart from the 1.0 work:
 
 ```bash
 git worktree add ../chromasense-v0.5 v0.5
@@ -49,7 +72,7 @@ docker compose build
 docker compose up portal
 ```
 
-Open [ChromaSense on localhost](http://localhost:9090). Image enhancement runs on the server and works without an AI provider or API key. When you are done, remove the folder with `git worktree remove ../chromasense-v0.5`.
+When you are done, remove the folder with `git worktree remove ../chromasense-v0.5`.
 
 ## Evaluate the result
 
@@ -61,6 +84,10 @@ The release target is improved simulated separation for at least 80% of eligible
 
 - [Software Requirements Specification (docx)](docs/ChromaSense_SRS.docx), with its working copy in [dev/srs.md](dev/srs.md)
 - [Architecture](dev/architecture.md)
+- [User guide](docs/user-guides/user-guide.md)
+- [Color Engine developer notes](docs/code/color-engine.md) and [portal developer notes](docs/code/portal.md)
+- [Diagrams](docs/diagrams/README.md)
+- [Acceptance results](docs/acceptance-results.md)
 - [Changelog](CHANGELOG.md)
 - [Team roles and deliverables](TEAM_ROLES.md)
 - [Release 0.5 enhancement benchmark](docs/enhancement-evaluation-v0.5.md)
