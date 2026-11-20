@@ -21,7 +21,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | 11 | Application Core and the upload use case  | CRITICAL | 🟢 green       | 11 core tests pass with fakes; no web framework needed; 4 contracts kept           |
 | 12 | Enhance use case and outcome policy       | Standard | 🟢 green       | All 3 outcomes and messages right; palette computed once across profiles           |
 | 13 | View and export use cases                 | Standard | 🟢 green       | PNG round trips exact; export 0 pixels changed outside mask                        |
-| 14 | Session storage and cleanup               | Standard | ⚪ not started |                                                                                    |
+| 14 | Session storage and cleanup               | Standard | 🟢 green       | 0 files left after end or idle purge; bad session IDs rejected                     |
 | 15 | Server and HTTP API                       | CRITICAL | ⚪ not started |                                                                                    |
 | 16 | Page, upload, and status messages         | Standard | ⚪ not started |                                                                                    |
 | 17 | Profile, comparison, and download         | Standard | ⚪ not started |                                                                                    |
@@ -281,7 +281,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 
 **File:** `14-session-storage-and-cleanup.md`  
 **SRS IDs:** SRS-NFR-005, SRS-FR-011  
-**Status:** ⚪ not started
+**Status:** 🟢 green
 
 | Zone   | Criterion |
 | ------ | --------- |
@@ -289,6 +289,13 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | Green  | 0 files left for an ended or idle session; bad IDs rejected |
 | Yellow | Files removed, but timing of idle purge off by more than a minute |
 | Red    | Any file left, or a path-forming ID accepted |
+
+**Result:** Originals and results round-trip exactly on a temporary folder, with and without enhanced pixels. `save_original` removes the result files. `EndSession` and `PurgeIdleSessions` with the real store leave 0 files: a session used 31 minutes ago is purged at `idle_minutes = 30`, one used 5 minutes ago is kept. `../x`, `abc`, a 129-character ID, slashes, spaces, and an empty ID are rejected with `ValueError`. Files stay inside the session folder and no temporary files remain, including after a failed write. Portal tests 60.
+
+**Notes:**
+
+- Pixel arrays are stored as `original.npy` and `enhanced.npy`, and the palette, labels, and mask as `result.npz`, instead of the PNG files in the increment's derived layout. *Why:* lossless and fast. At 12 megapixels, saving or loading an `.npy` takes about 0.01 s, while encoding one noisy PNG takes 1.5 s, which would be paid on every upload and enhancement. It also keeps image encoding out of the Storage Adapter.
+- `result.json` is written last and is the file that marks a result as present; the old result is deleted before a new original is written, so a stale result is never paired with a new image.
 
 ### 15 · Server and HTTP API  ⚠ CRITICAL
 
