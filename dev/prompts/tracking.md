@@ -25,7 +25,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | 15 | Server and HTTP API                       | CRITICAL | 🟢 green       | All 6 endpoints live on 9090; 413 before decode; 0 sessions after restart          |
 | 16 | Page, upload, and status messages         | Standard | 🟢 green       | Upload shows original; errors show reason; tab close ends session                  |
 | 17 | Profile, comparison, and download         | Standard | 🟢 green       | Profiles, limits, slider, and PNG download work; no-pair case hides download       |
-| 18 | Accessibility, layout, and interface copy | CRITICAL | ⚪ not started |                                                                                    |
+| 18 | Accessibility, layout, and interface copy | CRITICAL | 🟢 green       | 0 axe violations (22 rules); keyboard run; no scroll at 375/1280; copy clean       |
 | 19 | Processing time                           | Standard | ⚪ not started |                                                                                    |
 | 20 | Documentation and diagrams                | Standard | ⚪ not started |                                                                                    |
 
@@ -371,7 +371,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 
 **File:** `18-accessibility-and-copy.md`  
 **SRS IDs:** SRS-NFR-002, SRS-NFR-003, SRS-NFR-006  
-**Status:** ⚪ not started
+**Status:** 🟢 green
 
 | Zone   | Criterion |
 | ------ | --------- |
@@ -379,6 +379,20 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | Green  | 0 axe violations; full keyboard run; no horizontal scroll at 375 and 1280 px; copy check passes |
 | Yellow | Only minor axe issues outside contrast and labels |
 | Red    | A contrast or label violation, a keyboard trap, or a banned claim |
+
+**Result:** 20 checks in `tests/browser/test_accessibility.py`, all passing with no change to the Web UI:
+
+- Keyboard only: skip link first, then file input, profile radios (arrow keys), severity slider (arrow keys and End), "Enhance image" (Enter), comparison slider (arrow keys), and the download link (Enter downloads `chromasense-enhanced.png`). Every stop matches `:focus-visible` with an outline of at least 2 px. Focus moves past the last control and back with Shift+Tab, so there is no trap.
+- axe with `wcag2a`, `wcag2aa`, `wcag21aa`, and `wcag22aa`: 0 violations before upload, after upload, after an enhanced result, after an error, and after a no-pairs result, and at 375 × 812 and 1280 × 800. axe checks 22 rules on the page, and a guard test proves it reports a removed label and low-contrast text.
+- Layout: no horizontal page scroll at 375 and 1280 px before upload, after upload, and after enhancing, including a 2400 × 900 image; the full workflow completes at both widths.
+- Not color alone: every status message starts with a text label, and every visible control has a text label.
+- Copy: the rendered page, every template and script, and every outcome message contain none of the banned phrases outside the footer's "does not diagnose" and "give medical advice".
+
+**Still to do:** the increment's manual check, a screen reader run (VoiceOver or NVDA) through upload, enhance, compare, and download, hearing each status message. This needs a person.
+
+**Notes:**
+
+- `test_axe_check_can_fail` breaks the page on purpose and expects axe to report it, so a silent no-op axe run would fail the suite.
 
 ### 19 · Processing time
 
