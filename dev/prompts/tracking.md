@@ -19,7 +19,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | 09 | Separation check (filter 5)               | Standard | 🟢 green       | Both pairs improved (deutan 7.0 → 13.6, protan 1.2 → 8.4); coverage 98.2 %         |
 | 10 | Acceptance evaluation                     | CRITICAL | 🟡 yellow      | Held-out set not supplied (test skips); measurement verified on dev images         |
 | 11 | Application Core and the upload use case  | CRITICAL | 🟢 green       | 11 core tests pass with fakes; no web framework needed; 4 contracts kept           |
-| 12 | Enhance use case and outcome policy       | Standard | ⚪ not started |                                                                                    |
+| 12 | Enhance use case and outcome policy       | Standard | 🟢 green       | All 3 outcomes and messages right; palette computed once across profiles           |
 | 13 | View and export use cases                 | Standard | ⚪ not started |                                                                                    |
 | 14 | Session storage and cleanup               | Standard | ⚪ not started |                                                                                    |
 | 15 | Server and HTTP API                       | CRITICAL | ⚪ not started |                                                                                    |
@@ -245,7 +245,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 
 **File:** `12-enhance-use-case.md`  
 **SRS IDs:** SRS-FR-003, SRS-FR-005, SRS-FR-006, SRS-FR-009, SRS-FR-011  
-**Status:** ⚪ not started
+**Status:** 🟢 green
 
 | Zone   | Criterion |
 | ------ | --------- |
@@ -253,6 +253,14 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | Green  | All three outcomes and messages right; filter 2 runs once across a profile change |
 | Yellow | Outcomes right; palette recomputed on profile change |
 | Red    | A wrong outcome, or enhanced pixels stored for a non-`ENHANCED` outcome |
+
+**Result:** Deutan red–green gives `ENHANCED` ("Adjusted 1 of 1 color pairs likely to be confused."), with stored enhanced pixels equal to the original outside the mask. Red–blue gives `NO_CONFUSABLE_PAIRS` with no enhanced pixels. A stubbed filter 5 with no improvement gives `NOT_IMPROVED`. Changing deutan to protan calls filter 2 once in total (spy), and a new image gets a new palette. No image raises `NoImageInSession("Upload an image first.")`. Portal tests 28, engine tests 149 passed and 1 skipped.
+
+**Notes:**
+
+- `policy/outcome.py` has `message_for` alongside `outcome_for`, and the `ENHANCED` message uses "1 pair" for a single pair that could not be improved. *Why:* the increment's template reads " {n} pairs could not be improved."; the singular keeps the sentence grammatical.
+- Severity is written with `:g` formatting, so 1.0 reads "severity 1" and 0.8 reads "severity 0.8".
+- The `noqa` forward reference from increment 11 is removed; `ports.py` now imports `EnhancementResult`.
 
 ### 13 · View and export use cases
 

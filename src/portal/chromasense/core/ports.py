@@ -3,7 +3,7 @@
 from datetime import datetime
 from typing import Protocol
 
-from chromasense.core.models import SessionImage
+from chromasense.core.models import EnhancementResult, SessionImage
 
 
 class SessionImageStore(Protocol):
@@ -12,10 +12,9 @@ class SessionImageStore(Protocol):
 
     def load_original(self, session_id: str) -> SessionImage | None: ...
 
-    # EnhancementResult is added to chromasense.core.models in increment 12.
-    def save_result(self, session_id: str, result: "EnhancementResult") -> None: ...  # noqa: F821
+    def save_result(self, session_id: str, result: EnhancementResult) -> None: ...
 
-    def load_result(self, session_id: str) -> "EnhancementResult | None": ...  # noqa: F821
+    def load_result(self, session_id: str) -> EnhancementResult | None: ...
 
     def delete_session(self, session_id: str) -> None: ...
 
