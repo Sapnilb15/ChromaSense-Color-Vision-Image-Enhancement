@@ -67,6 +67,7 @@ def create_app(
         return _error(422, "invalid_request", "The request is not valid.")
 
     app.include_router(pages.router)
+    pages.mount_static(app, templates_dir.parent / "static")
     app.include_router(images.router)
     app.include_router(session.router)
     return app

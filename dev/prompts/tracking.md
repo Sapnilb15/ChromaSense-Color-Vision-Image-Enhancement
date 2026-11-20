@@ -23,7 +23,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | 13 | View and export use cases                 | Standard | 🟢 green       | PNG round trips exact; export 0 pixels changed outside mask                        |
 | 14 | Session storage and cleanup               | Standard | 🟢 green       | 0 files left after end or idle purge; bad session IDs rejected                     |
 | 15 | Server and HTTP API                       | CRITICAL | 🟢 green       | All 6 endpoints live on 9090; 413 before decode; 0 sessions after restart          |
-| 16 | Page, upload, and status messages         | Standard | ⚪ not started |                                                                                    |
+| 16 | Page, upload, and status messages         | Standard | 🟢 green       | Upload shows original; errors show reason; tab close ends session                  |
 | 17 | Profile, comparison, and download         | Standard | ⚪ not started |                                                                                    |
 | 18 | Accessibility, layout, and interface copy | CRITICAL | ⚪ not started |                                                                                    |
 | 19 | Processing time                           | Standard | ⚪ not started |                                                                                    |
@@ -327,7 +327,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 
 **File:** `16-page-upload-and-status.md`  
 **SRS IDs:** SRS-FR-001, SRS-FR-002, SRS-FR-004, SRS-NFR-005, SRS-NFR-003  
-**Status:** ⚪ not started
+**Status:** 🟢 green
 
 | Zone   | Criterion |
 | ------ | --------- |
@@ -335,6 +335,16 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | Green  | Valid files show the original; invalid files show `Error:` and reason; tab close clears the session |
 | Yellow | Works, but an earlier original disappears on error |
 | Red    | Invalid file shows an image, or an error has no text |
+
+**Result:** 9 Playwright tests in Chromium against a live portal: PNG and JPEG uploads show the original with "Done: Image uploaded, 60 by 40 pixels."; a renamed text file and a truncated JPEG show "Error:" with the server's reason, keep the image hidden, and request no image; an error after a valid upload keeps the earlier original; focus stays on the file input; the status region has `role="status"` and `aria-live="polite"`; the file input is labeled and described by the limits; closing the tab deletes the session folder. The `portal` image serves the page and every static file. Portal tests 109.
+
+**Notes:**
+
+- `setStatus(text, kind, label)` takes an optional label, so increment 17 can announce "Enhancing:" through the same function. Defaults: "Working", "Done", "Error".
+- `upload.js` dispatches a `chromasense:uploaded` event after a successful upload, for increment 17 to reset its results.
+- `pages.py` provides `mount_static(app, directory)`, which `create_app` calls. *Why:* a FastAPI router cannot hold a mount.
+- `pagehide` also fires on reload, so reloading the page ends the session and clears the image. This follows Decision 3 (the session ends when the page closes).
+- Browser tests run Uvicorn in a thread on a free port with a temporary data folder (`tests/browser/conftest.py`). The session-folder helper is a method on the server fixture, because test modules cannot import `conftest` under importlib mode.
 
 ### 17 · Profile, comparison, and download
 
