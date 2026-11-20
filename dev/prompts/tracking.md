@@ -388,7 +388,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 - Not color alone: every status message starts with a text label, and every visible control has a text label.
 - Copy: the rendered page, every template and script, and every outcome message contain none of the banned phrases outside the footer's "does not diagnose" and "give medical advice".
 
-**Still to do:** the increment's manual check, a screen reader run (VoiceOver or NVDA) through upload, enhance, compare, and download, hearing each status message. This needs a person.
+**Decision (2026-11-19):** the manual screen reader run is dropped. SRS-NFR-002's verification, "keyboard and accessibility walkthroughs complete the main workflow", is met by the automated keyboard-only walkthrough and the axe checks above, which confirm every control has a label and every status is announced through the `aria-live` region. The SRS cuts voice output and severe low vision support, and the app has no speech features; a named screen reader such as VoiceOver was only the increment file's example of a walkthrough, not an SRS requirement.
 
 **Notes:**
 

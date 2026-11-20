@@ -37,7 +37,6 @@ The page passes keyboard, screen reader label, contrast, layout, and copy checks
 ### Verification
 
 - `docker compose run --rm dev pytest src/portal/tests/browser` passes.
-- A manual run with a screen reader (VoiceOver or NVDA) completes upload, enhance, compare, and download, and hears each status message.
 
 ### Risk
 

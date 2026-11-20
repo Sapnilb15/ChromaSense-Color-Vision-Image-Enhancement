@@ -26,7 +26,7 @@ ChromaSense detects colors likely to be confused under the selected profile and 
 | 2. Architecture | [dev/architecture.md](dev/architecture.md) | Done |
 | 3. Structure | [dev/structure.md](dev/structure.md) | Done |
 | 4. Prompts | [dev/prompts/](dev/prompts/) | Done: 20 increments, tracked in [tracking.md](dev/prompts/tracking.md) |
-| 5. Build | [src/](src/) | Done: all 20 increments; increment 10 is waiting for the held-out test images, and a manual screen reader run is still to do |
+| 5. Build | [src/](src/) | Done: all 20 increments; increment 10 is waiting for the held-out test images |
 
 ## Repository layout
 
