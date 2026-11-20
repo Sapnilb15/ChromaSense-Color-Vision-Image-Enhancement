@@ -24,7 +24,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | 14 | Session storage and cleanup               | Standard | 🟢 green       | 0 files left after end or idle purge; bad session IDs rejected                     |
 | 15 | Server and HTTP API                       | CRITICAL | 🟢 green       | All 6 endpoints live on 9090; 413 before decode; 0 sessions after restart          |
 | 16 | Page, upload, and status messages         | Standard | 🟢 green       | Upload shows original; errors show reason; tab close ends session                  |
-| 17 | Profile, comparison, and download         | Standard | ⚪ not started |                                                                                    |
+| 17 | Profile, comparison, and download         | Standard | 🟢 green       | Profiles, limits, slider, and PNG download work; no-pair case hides download       |
 | 18 | Accessibility, layout, and interface copy | CRITICAL | ⚪ not started |                                                                                    |
 | 19 | Processing time                           | Standard | ⚪ not started |                                                                                    |
 | 20 | Documentation and diagrams                | Standard | ⚪ not started |                                                                                    |
@@ -350,7 +350,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 
 **File:** `17-profile-compare-download.md`  
 **SRS IDs:** SRS-FR-003, SRS-FR-008, SRS-FR-009, SRS-FR-010, SRS-FR-011  
-**Status:** ⚪ not started
+**Status:** 🟢 green
 
 | Zone   | Criterion |
 | ------ | --------- |
@@ -358,6 +358,14 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | Green  | Both profiles and limits work; slider compares the same area; PNG download matches; no-pair message shown |
 | Yellow | Works, but the download is offered for a non-`ENHANCED` outcome |
 | Red    | A profile or limit missing, or the download does not match the display |
+
+**Result:** 10 new Playwright tests: only Protan and Deutan are offered with none selected; severity starts at 1.0 and reaches 0 and 1, each sent in the request; "Enhance image" stays disabled until an image and a profile are chosen; on the deutan red–green sample the status reads "Done: Adjusted 1 of 1 color pairs likely to be confused.", the original and enhanced images have the same box, the comparison slider sets the clip (20 → `inset(0px 80% 0px 0px)`) and announces "20 percent enhanced", and the downloaded `chromasense-enhanced.png` matches the displayed enhanced image pixel for pixel; a red–blue image shows the no-pairs message with only the original and no download; deutan then protan sends two requests and updates the result; a new upload hides step 3 and the download; "Enhancing:" is announced before "Done:". Portal tests 119.
+
+**Notes:**
+
+- The comparison shows the enhanced image over the left part of the frame, as far as the slider (`clip-path: inset(0 {100 - p}% 0 0)`), and the slider's output reads "p percent enhanced". The hint under the slider says so in words.
+- The "Enhance image" button is disabled while a request is running, so a double click sends one request; a hint explains why it is disabled until an image and a profile are chosen.
+- The severity hint reads "0 applies no adjustment for the profile; 1 applies the full profile." (`derived` wording, no medical claim).
 
 ### 18 · Accessibility, layout, and interface copy  ⚠ CRITICAL
 
