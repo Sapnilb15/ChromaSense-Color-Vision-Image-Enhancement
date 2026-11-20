@@ -47,8 +47,11 @@
 </section>
 
 <section id="compare-section" class="step" aria-labelledby="compare-heading" hidden>
-  <h2 id="compare-heading">Step 3: Compare</h2>
+  <h2 id="compare-heading">Step 3: Compare and download</h2>
   <p id="compare-message" class="compare-message"></p>
+  <p id="download-section" class="download-row" hidden>
+    <a id="download-link" class="button" href="/api/image/export" download="chromasense-enhanced.png">Download enhanced PNG</a>
+  </p>
   <figure class="image-figure">
     <div id="compare-frame" class="compare-frame">
       <img id="compare-original" alt="Original image">
@@ -62,11 +65,6 @@
     <output id="compare-value" for="compare-position">50 percent enhanced</output>
     <p id="compare-hint" class="hint">The enhanced image covers the left part of the picture, as far as this position. Move it to compare the same area in both versions.</p>
   </div>
-</section>
-
-<section id="download-section" class="step" aria-labelledby="download-heading" hidden>
-  <h2 id="download-heading">Step 4: Download</h2>
-  <a id="download-link" class="button" href="/api/image/export" download="chromasense-enhanced.png">Download enhanced PNG</a>
 </section>
 {% endblock %}
 

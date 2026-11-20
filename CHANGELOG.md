@@ -33,6 +33,10 @@ The requirements went from about 110 rows in 0.5 to 18. Release 0.5 is available
 - SVG renders of the architecture diagrams, generated from their Mermaid sources
 - Google-style docstrings on every public module, class, and function, checked in CI by Ruff
 - An audience statement at the top of each document, with the documentation set following ISO/IEC/IEEE 26514:2022
+- An intent-driven browser test suite (SRS-FR-012) that runs each user task by pointer and keyboard, on phone and desktop widths, in Chromium, Firefox, and WebKit, before user testing
+- The download link now sits just below the result message, where it is on screen with the result. The comparison step is now "Step 3: Compare and download".
+- Keyboard focus stays on "Enhance image" while a result is processed. Before, focus was lost.
+- The original picture is shown once after a result, inside the comparison, instead of twice
 
 ### Kept from 0.5
 

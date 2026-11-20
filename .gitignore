@@ -17,3 +17,9 @@ htmlcov/
 
 # ChartQA images built by src/color_engine/tools/chartqa_dataset.py (GPL-3.0, not ours)
 /src/color_engine/tests/data/chartqa/
+
+# Playwright traces and screenshots from failed intent runs
+test-results/
+
+# Intent-driven UI test suite (SRS-FR-012): kept local, not committed
+/src/portal/tests/browser/intents/

@@ -76,9 +76,26 @@ From the repository root:
 ```bash
 docker compose run --rm dev pytest src/portal/tests                 # everything
 docker compose run --rm dev pytest src/portal/tests/core            # use cases, with fakes
-docker compose run --rm dev pytest src/portal/tests/browser         # Playwright and axe in Chromium
+docker compose run --rm dev pytest src/portal/tests/browser         # Playwright and axe, and the intent suite
+docker compose run --rm dev pytest src/portal/tests/browser/intents # intent suite only: run before user testing
 docker compose run --rm dev pytest src/portal/tests/performance -s  # timing on 4 CPUs and 8 GB
 docker compose run --rm dev lint-imports --config src/portal/pyproject.toml
 ```
 
 The core tests use the fakes in `tests/core/conftest.py`. The browser tests start a live portal on a free port with a temporary data folder. The accessibility tests check keyboard use, axe (WCAG 2.2 AA) in every page state, phone and desktop widths, and interface wording.
+
+### Intent suite (SRS-FR-012)
+
+Run the intent suite before every user-testing session. It answers one question: can a person actually complete each task on the page?
+
+- `tests/browser/intents/catalog.py` lists each intent: a goal in plain words, such as "Enhance a photo and download it", and its steps. Steps name controls only by accessible role and name or by label, never by ID or CSS selector.
+- `tests/browser/intents/test_intents.py` runs every intent by pointer and by keyboard, at 375 × 812 and 1280 × 800, in Chromium, Firefox, and WebKit (96 runs, about 5 minutes). It opens the file chooser from the visible control, drags sliders with the mouse or moves them with the arrow keys, and checks that the downloaded PNG matches the enhanced picture on screen.
+- `tests/browser/intents/oracles.py` runs after every step. It checks that the control is found once, visible, not covered, at least 24 × 24 pixels, and enabled. It also checks that the status region answered within 2 seconds and ended with the expected text within 30, that every shown picture loaded, that keyboard focus was kept, that the console and network show no errors, and that the page does not scroll sideways.
+
+A failure reads like this:
+
+> Intent "Enhance a photo and download it", step 6 "Download the enhanced picture from near the comparison": the link "Download enhanced PNG" is 1078 pixels below "Step 3: Compare", more than one screen (800 pixels) of scrolling (pointer, 1280 × 800, chromium)
+
+Each failed run saves `test-results/<intent>-<mode>-<viewport>-<browser>/screenshot.png` and `trace.zip`. Open the trace with `playwright show-trace <path>/trace.zip` to step through what happened.
+
+When an intent fails, fix the Web UI. Do not weaken a check. When user testing finds a new UI problem, add an intent that fails on the current code before fixing it. In Firefox only, if the file chooser does not open after the checks have passed, the runner sets the file directly and logs a `UserWarning`. This works around a Playwright–Firefox quirk that a person does not meet.

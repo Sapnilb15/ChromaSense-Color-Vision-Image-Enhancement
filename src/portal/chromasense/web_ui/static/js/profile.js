@@ -16,7 +16,11 @@ function chosenType() {
 
 function updateButton() {
   const ready = hasImage && chosenType() !== null;
-  button.disabled = !ready || busy;
+  button.disabled = !ready;
+  // While a request runs, the button stays focusable so keyboard focus is not lost; it only
+  // reports itself as unavailable, and enhance() ignores presses until the result arrives.
+  if (busy) button.setAttribute("aria-disabled", "true");
+  else button.removeAttribute("aria-disabled");
   hint.hidden = ready;
 }
 

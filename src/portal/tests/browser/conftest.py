@@ -1,6 +1,7 @@
 """A live portal on a free port, with a temporary data folder, and a Playwright browser."""
 
 import socket
+import sys
 import threading
 import time
 from pathlib import Path
@@ -13,6 +14,10 @@ from chromasense.main.settings import Settings
 from chromasense.main.wiring import build_app
 
 SAMPLES = Path(__file__).resolve().parents[3] / "color_engine" / "tests" / "data" / "samples"
+
+# The intent suite's catalog and oracles are plain modules beside its test file. Pytest runs
+# with --import-mode=importlib, which does not put that folder on the import path.
+sys.path.insert(0, str(Path(__file__).resolve().parent / "intents"))
 
 
 class LiveServer:
@@ -53,11 +58,24 @@ def server(tmp_path):
 
 
 @pytest.fixture(scope="session")
-def browser():
+def browser(browsers):
+    return browsers("chromium")
+
+
+@pytest.fixture(scope="session")
+def browsers():
+    """Launch Chromium, Firefox, or WebKit on first use, and close them all at the end."""
+    launched = {}
     with sync_playwright() as playwright:
-        instance = playwright.chromium.launch()
-        yield instance
-        instance.close()
+
+        def get(name: str):
+            if name not in launched:
+                launched[name] = getattr(playwright, name).launch()
+            return launched[name]
+
+        yield get
+        for instance in launched.values():
+            instance.close()
 
 
 @pytest.fixture

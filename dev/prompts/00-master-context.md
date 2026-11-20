@@ -231,6 +231,7 @@ Every row below must be satisfied. A `must` row's verification must hold before 
 | SRS-FR-009 | The app shall state when no confusable color pair was found or when enhancement could not improve a pair. (FR-09) | must | Each case displays a clear message rather than an unexplained result. |
 | SRS-FR-010 | The user shall download the enhanced image as a PNG. (FR-10) | must | The downloaded file opens and matches the displayed result. |
 | SRS-FR-011 | The user shall replace the image or change the profile and generate a new result. (FR-11) | must | A new image or profile produces an updated result. |
+| SRS-FR-012 | Before each user-testing session, the team shall run an automated, intent-driven browser test suite. Each test states a user goal in plain words, operates the page only as a user can (accessible names, visible text, pointer, and keyboard), and checks after every step that the user can see, reach, and use the result. (Team addition, November 2026) | must | The intent suite passes for every intent in the catalog at phone and desktop widths in Chromium, Firefox, and WebKit, by pointer and by keyboard, and each UI defect found in user testing is added as an intent that fails before its fix. |
 | SRS-NFR-001 | For a valid image within the stated limits, processing shall finish or report a recoverable error within 30 seconds on the documented test host. (NFR-01) | must | Timed runs on the test host meet the limit. |
 | SRS-NFR-002 | The browser interface shall support keyboard operation, visible focus, screen reader labels, and layouts usable on desktop and mobile screens. (NFR-02) | must | Keyboard and accessibility walkthroughs complete the main workflow. |
 | SRS-NFR-003 | Controls and status messages shall not rely on color alone and shall meet WCAG 2.2 AA text contrast requirements. (NFR-03) | must | Accessibility checks and manual review pass. |
@@ -267,7 +268,7 @@ From Section 6 of the source document.
 - **Imaging and color**: NumPy, Pillow (decode, color profile conversion, EXIF orientation, PNG encoding), scikit-image for CIELAB and CIEDE2000, scikit-learn for k-means
 - **Storage**: Local filesystem, on a Docker volume
 - **Build and packaging**: `pyproject.toml` for each Python package, installed with pip in the Docker image build
-- **Quality**: pytest and pytest-cov, DaltonLens as a test-only reference for simulation, Ruff for linting, formatting, and docstrings (pydocstyle `D` rules, Google convention), import-linter for dependency rules, Playwright with axe-playwright-python for browser and accessibility tests, and GitHub Actions for pull request checks
+- **Quality**: pytest and pytest-cov, DaltonLens as a test-only reference for simulation, Ruff for linting, formatting, and docstrings (pydocstyle `D` rules, Google convention), import-linter for dependency rules, Playwright with axe-playwright-python for browser, intent, and accessibility tests in Chromium, Firefox, and WebKit, and GitHub Actions for pull request checks
 - **Test host**: the Docker container limited to 4 CPU cores and 8 GB of memory, used for SRS-NFR-001 timing runs
 
 ### Hard constraints
@@ -287,6 +288,7 @@ From Section 6 of the source document.
 - Add no account system, database, message queue, separate worker service, or second web framework.
 - Each filter takes plain data and returns plain data, and no filter calls another filter. Only the Application Core use case decides the order.
 - Every public module, class, and function in `src/` has a Google-style docstring. Public Color Engine functions and each use case `execute` also document `Args`, `Returns`, and `Raises`. Each document in the documentation set states its audience and purpose. (SRS-NFR-008)
+- Intent tests find elements only by accessible role and name, label, or visible text, never by ID, class, or CSS selector, and act only as a user can: a real pointer click, the file chooser opened from the visible control, or the keyboard. They call no external service and no AI model, and every run gives the same result. (SRS-FR-012)
 
 ### Design constraints from the SRS
 
@@ -434,6 +436,10 @@ ChromaSense-Color-Vision-Image-Enhancement/
             ├── storage/
             ├── web_api/
             ├── browser/
+            │   └── intents/
+            │       ├── catalog.py
+            │       ├── oracles.py
+            │       └── test_intents.py
             └── performance/
                 └── test_processing_time.py
 ```
@@ -443,11 +449,11 @@ ChromaSense-Color-Vision-Image-Enhancement/
 | Path | Architecture part | What it holds |
 | --- | --- | --- |
 | `.devcontainer/` | Server Main | Team dev container, using the `dev` target |
-| `.github/workflows/ci.yml` | Server Main | Pull request checks: lint, format, dependency rules, engine tests without FastAPI, and portal tests |
+| `.github/workflows/ci.yml` | Server Main | Pull request checks: lint, format, dependency rules, engine tests without FastAPI, portal tests, and the intent suite |
 | `.dockerignore` | Server Main | Keeps `dev/`, `docs/`, and `.git/` out of the build context |
 | `.env.example` | Server Main | Configuration names with defaults and no secrets: data folder, confusion threshold (10), palette color count, and idle session minutes (30) |
-| `.gitignore` | Server Main | Ignores `.env`, caches, coverage output, and local session data |
-| `Dockerfile` | Server Main | Multi-stage build with `engine-test`, `dev`, and `runtime` targets on Python 3.11 |
+| `.gitignore` | Server Main | Ignores `.env`, caches, coverage output, Playwright `test-results/`, and local session data |
+| `Dockerfile` | Server Main | Multi-stage build with `engine-test`, `dev`, and `runtime` targets on Python 3.11; the `dev` target installs the Chromium, Firefox, and WebKit browsers for Playwright |
 | `docker-compose.yml` | Server Main | `portal` service on port 9090 with 4 CPUs and 8 GB, `dev` service for checks, `diagrams` service that renders `docs/diagrams/*.mmd` to SVG, and the session data volume |
 | `CHANGELOG.md` | Server Main | Changes between releases, starting with 1.0 against 0.5 |
 | `README.md` | Server Main | What the app does, how to start it, and how to reach it from another device on the local network |
@@ -482,6 +488,9 @@ ChromaSense-Color-Vision-Image-Enhancement/
 | `src/portal/tests/storage/` | Storage Adapter | Store tests on a temporary folder, including session deletion and idle purge |
 | `src/portal/tests/web_api/` | Web API | Endpoint tests with fake use cases, including the upload size cap and error reasons |
 | `src/portal/tests/browser/` | Web UI | Playwright and axe tests: the full workflow by keyboard, desktop and phone viewports, contrast, and text status messages |
+| `src/portal/tests/browser/intents/catalog.py` | Web UI | The intent catalog as plain dataclasses: each intent's goal in plain words, its steps (accessible role and name, action, expected status text), and its SRS IDs |
+| `src/portal/tests/browser/intents/oracles.py` | Web UI | Usability checks run after every step: found once, visible, inside the viewport, not covered, large enough to press, enabled, images loaded, status updated, focus kept, no console errors or failed requests, no horizontal scroll |
+| `src/portal/tests/browser/intents/test_intents.py` | Web UI | Runs each intent by pointer and by keyboard at 375 × 812 and 1280 × 800 in Chromium, Firefox, and WebKit, and saves a screenshot and trace on failure |
 | `src/portal/tests/performance/` | Application Core | Timing of upload plus enhancement on a 12 megapixel image in the reference container |
 
 ### Libraries and functions
@@ -535,6 +544,7 @@ ChromaSense-Color-Vision-Image-Enhancement/
 | `ruff` | `ruff check` (including the pydocstyle `D` rules) and `ruff format --check` | SRS-NFR-008 |
 | `import-linter` | `lint-imports` | none |
 | `playwright`, `axe-playwright-python` | Browser, viewport, keyboard, and accessibility tests | SRS-NFR-002, SRS-NFR-003 |
+| `playwright` | `get_by_role`, `get_by_label`, `get_by_text`, `page.expect_file_chooser`, `page.expect_download`, `page.on("console")`, `page.on("requestfailed")`, `document.elementFromPoint`, and `context.tracing` for the intent suite | SRS-FR-012 |
 | `minlag/mermaid-cli:11.4.2` image | `mmdc -i <name>.mmd -o <name>.svg` for each diagram, run by the `diagrams` compose service. It is a documentation tool and is not part of any image target | none |
 
 ### Build and run
@@ -548,6 +558,7 @@ ChromaSense-Color-Vision-Image-Enhancement/
    - `docker compose run --rm dev lint-imports --config src/portal/pyproject.toml`
    - `docker compose run --rm dev pytest src/color_engine/tests --cov=color_engine --cov-fail-under=70`
    - `docker compose run --rm dev pytest src/portal/tests`
+   - `docker compose run --rm dev pytest src/portal/tests/browser/intents` (the intent suite; run it before every user-testing session)
    - `docker compose run --rm diagrams` (regenerates every SVG in `docs/diagrams/`; `git diff --exit-code docs/diagrams` then shows no change if the SVGs were current)
 
 ### If the build fails
@@ -560,6 +571,7 @@ ChromaSense-Color-Vision-Image-Enhancement/
 6. Port: if the portal does not open, confirm that port 9090 is free, that the server binds `0.0.0.0`, and that the host firewall allows it.
 7. Line endings: if a file copied into the image fails with a bad interpreter or `\r` error, convert that file to LF.
 8. Diagrams: if `docker compose run --rm diagrams` fails, confirm that the image tag is pinned, that `docs/diagrams` is mounted at `/data`, and that each `.mmd` file renders on its own with `mmdc -i`. A diagram failure must not block the portal build.
+9. Intent suite: if a browser fails to launch, confirm that the `dev` image ran `playwright install --with-deps chromium firefox webkit`. If an intent fails, open its trace with `playwright show-trace test-results/<intent>/trace.zip` and fix the Web UI, not the intent or its checks.
 
 ### Main rules (repeated)
 

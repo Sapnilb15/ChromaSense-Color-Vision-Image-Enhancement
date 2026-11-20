@@ -1,5 +1,8 @@
 // Step 3: show the result. For an enhanced result, the enhanced image covers the left part of
-// the frame, as far as the comparison slider, so both versions show the same area.
+// the frame, as far as the comparison slider, so both versions show the same area. The
+// download link sits just below the result message, so it is on screen with the result.
+// The comparison holds the original too, so the separate original figure is hidden while a
+// result is shown, and a new upload shows it again.
 const section = document.getElementById("compare-section");
 const message = document.getElementById("compare-message");
 const frame = document.getElementById("compare-frame");
@@ -10,6 +13,7 @@ const control = document.getElementById("compare-control");
 const slider = document.getElementById("compare-position");
 const value = document.getElementById("compare-value");
 const download = document.getElementById("download-section");
+const originalSection = document.getElementById("original-section");
 
 function applyPosition() {
   const percent = Number(slider.value);
@@ -23,6 +27,7 @@ export function showResult({ outcome, text, type, severity }) {
   original.src = `/api/image/view/original?v=${stamp}`;
   message.textContent = text;
   section.hidden = false;
+  originalSection.hidden = true;
 
   if (outcome === "enhanced") {
     enhanced.src = `/api/image/view/enhanced?v=${stamp}`;

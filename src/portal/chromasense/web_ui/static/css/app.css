@@ -221,3 +221,7 @@ fieldset.profile legend {
   height: 100%;
   border: 0;
 }
+
+.download-row {
+  margin: 0.75rem 0 1rem;
+}

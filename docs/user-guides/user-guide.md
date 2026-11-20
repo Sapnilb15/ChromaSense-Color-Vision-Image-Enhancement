@@ -39,13 +39,11 @@ A message starting with **Enhancing:** appears, then one starting with **Done:**
 
 The button becomes available once you have uploaded a picture and chosen a profile. You can change the profile or severity and choose **Enhance image** again at any time.
 
-## Step 3: Compare
+## Step 3: Compare and download
 
 When ChromaSense has adjusted colors, the comparison shows the enhanced picture on top of the original. Move the **Comparison position** slider to choose how far the enhanced picture covers the original from the left. At 50, the left half is enhanced and the right half is the original, so you can see the same area in both versions. With a keyboard, use the arrow keys on the slider.
 
-## Step 4: Download
-
-Choose **Download enhanced PNG** to save the enhanced picture as `chromasense-enhanced.png`, at the same size as your original. This link appears only when ChromaSense has adjusted colors.
+Choose **Download enhanced PNG**, just below the message, to save the enhanced picture as `chromasense-enhanced.png`, at the same size as your original. This link appears only when ChromaSense has adjusted colors.
 
 ## What the messages mean
 

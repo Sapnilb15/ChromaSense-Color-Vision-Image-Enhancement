@@ -18,7 +18,7 @@ RUN apt-get update \
 COPY src src
 RUN pip install -e "./src/color_engine[test]" \
     && pip install -e "./src/portal[test]"
-RUN playwright install --with-deps chromium
+RUN playwright install --with-deps chromium firefox webkit
 
 FROM base AS runtime
 COPY src src

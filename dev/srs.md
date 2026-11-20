@@ -75,6 +75,7 @@ ChromaSense is a new, self-contained product. It runs on a development server on
 | SRS-FR-009 | The app shall state when no confusable color pair was found or when enhancement could not improve a pair. (FR-09) | must | Each case displays a clear message rather than an unexplained result. |
 | SRS-FR-010 | The user shall download the enhanced image as a PNG. (FR-10) | must | The downloaded file opens and matches the displayed result. |
 | SRS-FR-011 | The user shall replace the image or change the profile and generate a new result. (FR-11) | must | A new image or profile produces an updated result. |
+| SRS-FR-012 | Before each user-testing session, the team shall run an automated, intent-driven browser test suite. Each test states a user goal in plain words, operates the page only as a user can (accessible names, visible text, pointer, and keyboard), and checks after every step that the user can see, reach, and use the result. (Team addition, November 2026) | must | The intent suite passes for every intent in the catalog at phone and desktop widths in Chromium, Firefox, and WebKit, by pointer and by keyboard, and each UI defect found in user testing is added as an intent that fails before its fix. |
 | SRS-NFR-001 | For a valid image within the stated limits, processing shall finish or report a recoverable error within 30 seconds on the documented test host. (NFR-01) | must | Timed runs on the test host meet the limit. |
 | SRS-NFR-002 | The browser interface shall support keyboard operation, visible focus, screen reader labels, and layouts usable on desktop and mobile screens. (NFR-02) | must | Keyboard and accessibility walkthroughs complete the main workflow. |
 | SRS-NFR-003 | Controls and status messages shall not rely on color alone and shall meet WCAG 2.2 AA text contrast requirements. (NFR-03) | must | Accessibility checks and manual review pass. |
@@ -110,6 +111,7 @@ ChromaSense is a new, self-contained product. It runs on a development server on
 ## Optional: Software attributes
 
 - Maintainability: documented code and a standard documentation set (SRS-NFR-008)
+- Usability: an intent-driven browser suite that passes before each user-testing session (SRS-FR-012)
 
 ## Optional: Acceptance plan
 

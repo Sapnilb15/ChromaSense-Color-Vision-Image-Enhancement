@@ -29,6 +29,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | 19 | Processing time                           | Standard | 🟢 green       | 12 MP in 7.0 s (PNG) and 10.3 s (noisy JPEG); 20 MP rejected in 0.001 s            |
 | 20 | Documentation and diagrams                | Standard | 🟢 green       | 3 diagrams with SVGs (no diff on regenerate); docs written; all links resolve      |
 | 21 | Professional documentation                | Standard | 🟢 green       | 0 Ruff D findings (103 fixed); checklist met; all checks pass with same counts     |
+| 22 | Intent-driven UI tests                    | CRITICAL | 🟡 yellow      | 96 of 96 runs pass in 3 browsers; D2 and 2 new defects fixed; D1 not reproduced    |
 
 ## Increments
 
@@ -463,3 +464,36 @@ A 20 megapixel PNG is rejected with `TOO_MANY_PIXELS` in 0.001 s. No engine chan
 
 - The checklist's CHANGELOG row now covers releases from 1.0 on. *Why:* release 0.5's history lives only in the `v0.5` tag, so its entry cannot list Added, Changed, and Removed without inventing them.
 - `src/color_engine/tools/chartqa_dataset.py` is not in the `structure.md` tree and calls the network (it downloads ChartQA). Its two public `_HttpRangeFile` methods are on a private class, so Ruff does not require docstrings. Risk: the tree check in the final review flags this file until the tree names it or the file moves.
+
+### 22 · Intent-driven UI tests
+
+**File:** `22-intent-driven-ui-tests.md`  
+**SRS IDs:** SRS-FR-012  
+**Status:** 🟡 yellow
+
+| Zone   | Criterion |
+| ------ | --------- |
+| Metric | Intent runs passed out of intents × 2 modes × 2 viewports × 3 browsers; known UI defects caught |
+| Green  | Every run passes; every known defect has an intent that failed before its fix; all other checks pass |
+| Yellow | Every run passes in Chromium, but a Firefox or WebKit run fails for a reason recorded in Notes |
+| Red    | Any Chromium run fails, a known defect has no intent, an oracle was weakened or skipped, or an intent uses an ID or CSS selector |
+
+**Result:** 8 intents × 2 modes × 2 viewports × 3 browsers = 96 runs, and all pass in about 4 minutes. The dev image now installs Chromium, Firefox, and WebKit. CI runs the suite as its own step and uploads `test-results/` when it fails. The existing 142 portal tests still pass, and Ruff, Ruff format, and `lint-imports` are clean. The suite caught each of four deliberate breaks with a readable message: a hidden upload control ("is hidden"), a covered Enhance button ("is covered by a div in Step 2"), a broken enhanced-image URL ("422 for GET …/enhancedx"), and the old download layout ("1078 pixels below Step 3: Compare, more than one screen (800 pixels)"). Yellow, not green: D1 has an intent, but it has not failed on any file yet, because the team's failing PNGs are not yet in `src/color_engine/tests/data/samples/ui/`.
+
+Web UI fixes made by this increment:
+
+- **D2**: the download link moved from the bottom of the page to just below the result message. The heading is now "Step 3: Compare and download", and the user guide was updated to match.
+- **New, focus loss**: pressing "Enhance image" set `disabled` on the button while the request ran, so every browser dropped keyboard focus to the page body. The button now stays focusable with `aria-disabled="true"` while busy, and `enhance()` already ignores presses while busy.
+- **New, duplicate original**: after a result, the original picture showed twice (the original figure and the comparison). The original figure is now hidden while a result is shown, and shown again on a new upload.
+- `base.html` declares an empty icon, so browsers do not request `/favicon.ico` and get a 404.
+
+**Notes:**
+
+Known UI defects reported by the team on 2026-11-19, before this increment started:
+
+- **D1 · Images fail to display.** Seen with several of the team's own PNG files. Not reproduced yet: a scripted check showed both images (`naturalWidth` 1600, no console or network errors) for RGB, RGBA, palette, grayscale, and JPEG files of 1600 × 1200, at 375 and 1280 widths. Chromium, Firefox, and WebKit passed against the source tree over a non-localhost address, and Chromium passed against the `portal` container. Still to check: (a) the team's failing PNGs, added as fixtures; (b) stale JavaScript, because static files are served with no version in their URL (`/static/js/*.js` returns 304), so a browser can keep running code from an earlier build; (c) reloading or opening an image in a new tab, because `pagehide` sends the end-session beacon and deletes the session's images. Later finding: the team's running `portal` container was created from image `84be2bd`, two hours older than the current build (`0b410e3`), because `docker compose up -d` does not recreate a running container after a build. The team may have been testing old code. The intent for (b), stale script on reload, was dropped: the server answers 304 only when the file is unchanged, so the browser does revalidate. The PNG variants intent (RGBA, palette, Display P3 profile, 6 megapixels) passes in all three browsers.
+- **D2 · No easy way to download the enhanced image.** Reproduced. The "Download enhanced PNG" link is the last thing on the page, below two full copies of the picture: at 1280 × 800 its top is at y = 1703 (more than two screens down), and at 375 × 812 at y = 1361. When the outcome is `NO_CONFUSABLE_PAIRS`, the download section is hidden and no message says why.
+- `valid.png` has no protan-confusable pair, so the profile-switch intent uses a generated picture, (170, 90, 40) beside (110, 130, 40), that is confusable under both profiles.
+- The page has three elements with the `status` role: the shared status region and two `<output>` value readouts. The status check reads the region marked `role="status"`.
+- Firefox under Playwright stops opening the file chooser after any script runs on the file input's element handle (`scroll_into_view_if_needed`, `evaluate`, or `bounding_box`). Plain clicks always open it, so a person does not meet this. The target check and keyboard focus check for the labelled file control therefore run at page level, finding the control by its label text. In one intent (PNG variants, pointer mode) Firefox still does not open repeat choosers, so in Firefox only the runner sets the file directly after all checks have passed and logs a `UserWarning` (6 per full run). The increment file's main rules and verification now name this exception.
+- The increment file's sketch of the dataclasses was replaced with a prose description. `ruff format --check .` formats Python blocks inside Markdown, and the sketch was out of date.
