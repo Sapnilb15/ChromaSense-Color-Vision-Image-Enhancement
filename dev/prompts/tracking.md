@@ -17,7 +17,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | 07 | Confusion detection (filter 3)            | Standard | 🟢 green       | Red–green flagged (deutan 7.0, protan 1.2); red–blue not; mask exact               |
 | 08 | Targeted enhancement (filter 4)           | CRITICAL | 🟢 green       | 0 pixels changed outside mask; L gap 20.5 deutan, 21.9 protan; no banding          |
 | 09 | Separation check (filter 5)               | Standard | 🟢 green       | Both pairs improved (deutan 7.0 → 13.6, protan 1.2 → 8.4); coverage 98.2 %         |
-| 10 | Acceptance evaluation                     | CRITICAL | ⚪ not started |                                                                                    |
+| 10 | Acceptance evaluation                     | CRITICAL | 🟡 yellow      | Held-out set not supplied (test skips); measurement verified on dev images         |
 | 11 | Application Core and the upload use case  | CRITICAL | ⚪ not started |                                                                                    |
 | 12 | Enhance use case and outcome policy       | Standard | ⚪ not started |                                                                                    |
 | 13 | View and export use cases                 | Standard | ⚪ not started |                                                                                    |
@@ -204,7 +204,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 
 **File:** `10-acceptance-evaluation.md`  
 **SRS IDs:** SRS-NFR-007  
-**Status:** ⚪ not started
+**Status:** 🟡 yellow
 
 | Zone   | Criterion |
 | ------ | --------- |
@@ -212,6 +212,13 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | Green  | At least 80 percent for protan and for deutan; results in `docs/acceptance-results.md` |
 | Yellow | Held-out set not supplied (test skipped), or 70 to 80 percent |
 | Red    | Under 70 percent for a profile, or held-out images were created or altered |
+
+**Result:** Yellow until the team adds the held-out set to `src/color_engine/tests/data/acceptance/`; `labels.json` has the schema and an empty `images` list, and the target test skips with `held-out set not supplied`. The isolation test runs the same measurement on three synthetic graphics in a temporary folder: deutan and protan red–green pairs each 1 of 1 improved, red–blue not eligible, 0 pixels changed outside target regions, 0 newly confusable. Engine tests 149 passed, 1 skipped. To turn this row green, add the images and labels, run `docker compose run --rm dev pytest src/color_engine/tests/acceptance -s`, and record the table in `docs/acceptance-results.md`.
+
+**Notes:**
+
+- The report adds an "Above threshold after" column: improved pairs whose simulated distance after enhancement reaches the threshold. *Why:* the risk recorded under 09. In the isolation test, deutan ends above the threshold (1 of 1) but protan does not (0 of 1), although both count as improved.
+- The isolation test always runs, on synthetic images built in `tmp_path`. *Why:* it proves the measurement code before the held-out set exists, without creating or touching held-out images.
 
 ### 11 · Application Core and the upload use case  ⚠ CRITICAL
 
