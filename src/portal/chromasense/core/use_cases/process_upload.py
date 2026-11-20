@@ -26,18 +26,30 @@ _REJECTION_FOR = {
 
 @dataclass(frozen=True)
 class ProcessUploadRequest:
+    """The session and the uploaded file's bytes."""
+
     session_id: str
     data: bytes
 
 
 @dataclass(frozen=True)
 class ProcessUploadResponse:
+    """The new image's ID and size."""
+
     image_id: str
     width: int
     height: int
 
 
 class ProcessUpload:
+    """Decode an upload with filter 1 and store it as the session's original image.
+
+    Args:
+        store: The session image store.
+        clock: The clock, used for the upload time and the session's last use.
+        settings: The input limits.
+    """
+
     def __init__(
         self, store: SessionImageStore, clock: Clock, settings: ProcessingSettings
     ) -> None:
@@ -46,6 +58,19 @@ class ProcessUpload:
         self._settings = settings
 
     def execute(self, request: ProcessUploadRequest) -> ProcessUploadResponse:
+        """Validate and decode the upload, replacing the session's image and result.
+
+        Args:
+            request: The session and the uploaded bytes.
+
+        Returns:
+            The new image's ID, width, and height.
+
+        Raises:
+            UploadRejected: If the file is not a PNG or JPEG, is corrupt, is larger than
+                10 MB, or is larger than 12 megapixels. The error carries a message for
+                the user.
+        """
         try:
             decoded = decode_1(request.data, self._settings.input_limits)
         except DecodeError as error:

@@ -10,22 +10,45 @@ from color_engine.rules.encode import encode_png
 
 @dataclass(frozen=True)
 class RenderViewRequest:
+    """The session and which version of its image to render."""
+
     session_id: str
     view: View
 
 
 @dataclass(frozen=True)
 class RenderViewResponse:
+    """The requested version as PNG bytes, with the image's ID."""
+
     png: bytes
     image_id: str
 
 
 class RenderView:
+    """Return the session's original or enhanced image for display.
+
+    Args:
+        store: The session image store.
+        clock: The clock, used to record when the session was last used.
+    """
+
     def __init__(self, store: SessionImageStore, clock: Clock) -> None:
         self._store = store
         self._clock = clock
 
     def execute(self, request: RenderViewRequest) -> RenderViewResponse:
+        """Encode the requested version of the session image as a PNG.
+
+        Args:
+            request: The session and the view, original or enhanced.
+
+        Returns:
+            The PNG bytes and the original image's ID.
+
+        Raises:
+            NoImageInSession: If the session has no uploaded image, or the enhanced view
+                is requested and there is no enhanced image.
+        """
         original = self._store.load_original(request.session_id)
         if original is None:
             raise NoImageInSession("Upload an image first.")

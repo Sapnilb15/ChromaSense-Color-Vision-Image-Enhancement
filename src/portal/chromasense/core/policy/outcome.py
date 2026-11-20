@@ -9,6 +9,15 @@ from color_engine.models import CvdProfile, SeparationReport5
 
 
 def outcome_for(report: SeparationReport5) -> Outcome:
+    """Decide the outcome of an enhancement from filter 5's report.
+
+    Args:
+        report: Filter 5's separation report.
+
+    Returns:
+        ``NO_CONFUSABLE_PAIRS`` when no pair was flagged, ``NOT_IMPROVED`` when no flagged
+        pair improved, and ``ENHANCED`` otherwise.
+    """
     if report.eligible_count == 0:
         return Outcome.NO_CONFUSABLE_PAIRS
     if report.improved_count == 0:
@@ -17,6 +26,16 @@ def outcome_for(report: SeparationReport5) -> Outcome:
 
 
 def message_for(outcome: Outcome, report: SeparationReport5, profile: CvdProfile) -> str:
+    """Write the status message the user reads for an outcome.
+
+    Args:
+        outcome: The outcome from ``outcome_for``.
+        report: The same separation report, for the pair counts.
+        profile: The profile used, named in the no-pairs message.
+
+    Returns:
+        A plain-language message that makes no diagnostic or exact-perception claim.
+    """
     if outcome is Outcome.NO_CONFUSABLE_PAIRS:
         return (
             f"No colors likely to be confused were found for the {profile.type.value} profile "

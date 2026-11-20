@@ -20,12 +20,16 @@ from color_engine.pipeline.filter_5_separation.check_separation_5 import check_s
 
 @dataclass(frozen=True)
 class EnhanceImageRequest:
+    """The session whose image to enhance, and the profile to enhance it for."""
+
     session_id: str
     profile: CvdProfile
 
 
 @dataclass(frozen=True)
 class EnhanceImageResponse:
+    """The outcome of an enhancement, with its message and pair counts."""
+
     outcome: Outcome
     message: str
     eligible_count: int
@@ -34,6 +38,14 @@ class EnhanceImageResponse:
 
 
 class EnhanceImage:
+    """Enhance the session's original image for a CVD profile with filters 2 to 5.
+
+    Args:
+        store: The session image store.
+        clock: The clock, used to record when the session was last used.
+        settings: The confusion threshold and palette color count.
+    """
+
     def __init__(
         self, store: SessionImageStore, clock: Clock, settings: ProcessingSettings
     ) -> None:
@@ -42,6 +54,20 @@ class EnhanceImage:
         self._settings = settings
 
     def execute(self, request: EnhanceImageRequest) -> EnhanceImageResponse:
+        """Run filters 2 to 5 on the stored original and store the result.
+
+        The palette from filter 2 is reused when the stored result belongs to the same
+        image, so changing only the profile skips palette extraction.
+
+        Args:
+            request: The session and the profile.
+
+        Returns:
+            The outcome, its message, and the eligible and improved pair counts.
+
+        Raises:
+            NoImageInSession: If the session has no uploaded image.
+        """
         original = self._store.load_original(request.session_id)
         if original is None:
             raise NoImageInSession("Upload an image first.")

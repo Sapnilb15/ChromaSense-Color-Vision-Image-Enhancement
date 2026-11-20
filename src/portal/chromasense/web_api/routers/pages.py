@@ -12,6 +12,7 @@ router = APIRouter()
 
 @router.get("/", response_class=HTMLResponse)
 def index(request: Request):
+    """Render the single workflow page."""
     templates = Jinja2Templates(directory=request.app.state.templates_dir)
     return templates.TemplateResponse(request, "index.html")
 

@@ -21,6 +21,24 @@ def check_separation_5(
     profile: CvdProfile,
     threshold: float,
 ) -> SeparationReport5:
+    """Check whether enhancement increased the simulated separation of each flagged pair.
+
+    Args:
+        confusion: Output of filter 3, with the flagged pairs and their simulated distance
+            before enhancement.
+        enhanced: Output of filter 4 for the same palette.
+        profile: The CVD type and severity to simulate. Use the one given to filter 3.
+        threshold: The CIEDE2000 confusion threshold. Use the one given to filter 3.
+
+    Returns:
+        For each flagged pair, the simulated distance before and after and whether it grew,
+        the counts of eligible and improved pairs, and any unflagged pair whose simulated
+        distance was at least ``threshold`` before and is below it after.
+
+    Raises:
+        ValueError: If ``enhanced`` has a different number of palette colors than
+            ``confusion``.
+    """
     palette = confusion.palette
     if enhanced.palette_lab_after.shape != palette.colors_lab.shape:
         raise ValueError("enhanced palette does not match the confusion result's palette")

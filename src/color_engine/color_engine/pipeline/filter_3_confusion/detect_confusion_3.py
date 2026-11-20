@@ -12,6 +12,25 @@ from color_engine.rules.simulation import simulate
 def detect_confusion_3(
     pixels: NDArray, palette: Palette2, profile: CvdProfile, threshold: float
 ) -> ConfusionResult3:
+    """Flag palette pairs that become confusable under a CVD profile.
+
+    A pair is flagged when its CIEDE2000 distance is at least ``threshold`` in the
+    original and below ``threshold`` after both colors are simulated. Flagged pairs that
+    share a color are joined into groups, and the mask covers every pixel of a grouped color.
+
+    Args:
+        pixels: The image the palette came from, of shape (height, width, 3).
+        palette: Output of filter 2 for ``pixels``.
+        profile: The CVD type and severity to simulate.
+        threshold: The CIEDE2000 confusion threshold. The default setting is 10.
+
+    Returns:
+        The flagged pairs with their distances, the groups, and the pixel mask.
+
+    Raises:
+        ValueError: If ``threshold`` is not positive, or ``pixels`` and ``palette.labels``
+            differ in height or width.
+    """
     if threshold <= 0:
         raise ValueError("threshold must be positive")
     if np.asarray(pixels).shape[:2] != palette.labels.shape:

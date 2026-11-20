@@ -1,5 +1,7 @@
 # Portal
 
+**Who this is for:** developers who change or test the web portal. It is a reference for the parts, use cases, HTTP API, session lifecycle, settings, and tests.
+
 `src/portal/` is the `chromasense` package: the web portal around the Color Engine. Its parts follow [`dev/architecture.md`](../../dev/architecture.md), and import rules keep dependencies pointing inward (checked by `lint-imports`).
 
 | Part | Folder | Job |
@@ -58,6 +60,14 @@ Server Main reads these environment variables (`chromasense/main/settings.py` is
 | `CHROMASENSE_CONFUSION_THRESHOLD` | `10` | CIEDE2000 threshold for a confusable pair |
 | `CHROMASENSE_PALETTE_COLORS` | `12` | Maximum palette colors |
 | `CHROMASENSE_IDLE_MINUTES` | `30` | Minutes before an idle session is deleted |
+
+## Code documentation
+
+Every public module, class, and function has a [PEP 257](https://peps.python.org/pep-0257/) docstring in Google style. Each use case `execute` also documents `Args`, `Returns`, and `Raises`. Ruff's pydocstyle rules check this, and tests are exempt:
+
+```bash
+docker compose run --rm dev ruff check .
+```
 
 ## Tests
 

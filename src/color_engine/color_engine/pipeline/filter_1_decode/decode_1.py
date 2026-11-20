@@ -15,6 +15,25 @@ _DECODE_ERRORS = (OSError, SyntaxError, ValueError, EOFError, struct.error)
 
 
 def decode_1(data: bytes, limits: InputLimits) -> DecodedImage1:
+    """Validate uploaded bytes and decode them to upright 8-bit sRGB pixels.
+
+    The format is judged from the content, not the file name. The size and pixel count
+    are checked before any pixel data is decoded. EXIF orientation is applied, an
+    embedded color profile is converted to sRGB, and transparency is placed on white.
+
+    Args:
+        data: The uploaded file.
+        limits: The largest accepted file size and pixel count.
+
+    Returns:
+        The decoded image and its detected format.
+
+    Raises:
+        DecodeError: With reason ``TOO_LARGE`` if ``data`` exceeds ``limits.max_bytes``,
+            ``UNSUPPORTED_TYPE`` if it is not a single-frame PNG or JPEG,
+            ``TOO_MANY_PIXELS`` if width times height exceeds ``limits.max_megapixels``,
+            or ``CORRUPT`` if the image or its color profile cannot be decoded.
+    """
     if len(data) > limits.max_bytes:
         raise DecodeError(DecodeReason.TOO_LARGE)
 

@@ -16,6 +16,26 @@ _LIGHTNESS_GAP = 22.0
 
 
 def enhance_4(pixels: NDArray, confusion: ConfusionResult3) -> EnhancedImage4:
+    """Separate confusable colors by CIELAB lightness, changing only masked pixels.
+
+    Each group's colors are spaced 22 lightness units apart between 15 and 90, avoiding
+    the lightness of the image's other colors where possible. Near-identical colors move
+    together, so a noisy region is not split into bands. Pixels outside
+    ``confusion.mask`` are copied unchanged.
+
+    Args:
+        pixels: sRGB uint8 array of shape (height, width, 3), the same image given to
+            filters 2 and 3.
+        confusion: Output of filter 3.
+
+    Returns:
+        The enhanced pixels and each palette color's CIELAB after enhancement. With no
+        flagged groups, the pixels are an unchanged copy.
+
+    Raises:
+        ValueError: If ``pixels`` is not uint8 or does not match the palette labels' height
+            and width.
+    """
     image = np.asarray(pixels)
     if image.dtype != np.uint8 or image.shape[:2] != confusion.palette.labels.shape:
         raise ValueError("pixels must be uint8 and match the palette labels")

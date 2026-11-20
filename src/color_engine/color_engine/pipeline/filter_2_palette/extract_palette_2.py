@@ -15,6 +15,24 @@ _ASSIGN_CHUNK = 262_144
 
 
 def extract_palette_2(pixels: NDArray, color_count: int) -> Palette2:
+    """Find an image's dominant colors with k-means in CIELAB.
+
+    k-means runs with a fixed seed on at most 50,000 distinct colors, weighted by pixel
+    count, so the same image always gives the same palette. Centers closer than CIEDE2000
+    2.3 are merged, and every pixel is assigned to its nearest remaining color.
+
+    Args:
+        pixels: sRGB uint8 array of shape (height, width, 3).
+        color_count: The most colors to return. Fewer come back when the image has fewer
+            distinct colors or centers merge.
+
+    Returns:
+        The palette, ordered by pixel count from most to least.
+
+    Raises:
+        ValueError: If ``pixels`` is not a uint8 array of shape (height, width, 3), or
+            ``color_count`` is less than 1.
+    """
     image = np.asarray(pixels)
     if image.dtype != np.uint8 or image.ndim != 3 or image.shape[2] != 3:
         raise ValueError("pixels must be a uint8 array of shape (H, W, 3)")

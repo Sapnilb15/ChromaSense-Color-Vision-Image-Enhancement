@@ -1,5 +1,8 @@
-"""Web API: a humble HTTP adapter. It caps the body, checks request shape, calls one use case,
-and maps the result or error to a response. It holds no business rules."""
+"""Web API: a humble HTTP adapter that holds no business rules.
+
+It caps the body, checks request shape, calls one use case, and maps the result or error
+to a response.
+"""
 
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -25,6 +28,8 @@ _STATUS_FOR_REJECTION = {
 
 @dataclass(frozen=True)
 class UseCases:
+    """The use cases that the routers call, constructed by Server Main."""
+
     process_upload: Any
     enhance_image: Any
     render_view: Any
@@ -38,6 +43,21 @@ def create_app(
     templates_dir: Path,
     lifespan: Callable | None = None,
 ) -> FastAPI:
+    """Create the FastAPI app with its routers, session cookie, and error responses.
+
+    Every error response is JSON with a ``reason`` code and a ``message`` the user can read.
+    The interactive API docs are turned off.
+
+    Args:
+        use_cases: The use cases to call.
+        max_upload_bytes: The largest upload body accepted.
+        templates_dir: The Jinja2 templates folder. Static files are served from the
+            ``static`` folder beside it.
+        lifespan: Startup and shutdown work from Server Main.
+
+    Returns:
+        The app.
+    """
     app = FastAPI(
         title="ChromaSense", lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None
     )

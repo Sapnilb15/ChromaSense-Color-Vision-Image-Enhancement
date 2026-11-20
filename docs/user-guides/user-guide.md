@@ -1,5 +1,7 @@
 # ChromaSense user guide
 
+**Who this is for:** people with protan or deutan color vision deficiency who use ChromaSense in a web browser. It explains each step of the workflow, what each message means, and how your pictures are handled. No technical knowledge is needed.
+
 ChromaSense helps people with red–green color vision deficiency tell apart colors in their own pictures. You upload a picture, choose your profile, and get a version where colors that are hard to tell apart are made lighter or darker. You can compare it with the original and download it.
 
 It works the same way for photos, charts, maps, and other pictures. Results depend on the picture.
@@ -32,6 +34,8 @@ Choose **Choose a PNG or JPEG image** and pick a file. The picture uploads as so
 1. Under **Color vision profile**, choose **Protan** or **Deutan**.
 2. Set **Severity** from 0 to 1. It starts at 1. At 0, no adjustment is made for the profile; at 1, the full profile is used.
 3. Choose **Enhance image**.
+
+A message starting with **Enhancing:** appears, then one starting with **Done:** that says what ChromaSense found. If colors were adjusted, the comparison appears.
 
 The button becomes available once you have uploaded a picture and chosen a profile. You can change the profile or severity and choose **Enhance image** again at any time.
 

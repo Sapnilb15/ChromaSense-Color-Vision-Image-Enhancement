@@ -25,8 +25,8 @@ ChromaSense detects colors likely to be confused under the selected profile and 
 | 1. Requirements | [dev/srs.md](dev/srs.md) | Done |
 | 2. Architecture | [dev/architecture.md](dev/architecture.md) | Done |
 | 3. Structure | [dev/structure.md](dev/structure.md) | Done |
-| 4. Prompts | [dev/prompts/](dev/prompts/) | Done: 20 increments, tracked in [tracking.md](dev/prompts/tracking.md) |
-| 5. Build | [src/](src/) | Done: all 20 increments; increment 10 is waiting for the held-out test images |
+| 4. Prompts | [dev/prompts/](dev/prompts/) | Done: 21 increments, tracked in [tracking.md](dev/prompts/tracking.md) |
+| 5. Build | [src/](src/) | Done: all 21 increments; increment 10 is waiting for the held-out test images |
 
 ## Repository layout
 
@@ -82,12 +82,16 @@ The release target is improved simulated separation for at least 80% of eligible
 
 ## Project documents
 
-- [Software Requirements Specification (docx)](docs/ChromaSense_SRS.docx), with its working copy in [dev/srs.md](dev/srs.md)
-- [Architecture](dev/architecture.md)
-- [User guide](docs/user-guides/user-guide.md)
-- [Color Engine developer notes](docs/code/color-engine.md) and [portal developer notes](docs/code/portal.md)
-- [Diagrams](docs/diagrams/README.md)
-- [Acceptance results](docs/acceptance-results.md)
-- [Changelog](CHANGELOG.md)
-- [Team roles and deliverables](TEAM_ROLES.md)
-- [Release 0.5 enhancement benchmark](docs/enhancement-evaluation-v0.5.md)
+The documentation set follows ISO/IEC/IEEE 26514:2022 for audience, purpose, task steps, reference completeness, messages, and limits (SRS-NFR-008). Python code carries Google-style docstrings, checked by `ruff check .`.
+
+| Document | For |
+| --- | --- |
+| [Software Requirements Specification (docx)](docs/ChromaSense_SRS.docx), with its working copy in [dev/srs.md](dev/srs.md) | Team, instructor, testers |
+| [Architecture](dev/architecture.md) | Developers |
+| [User guide](docs/user-guides/user-guide.md) | People who use ChromaSense |
+| [Color Engine developer notes](docs/code/color-engine.md) and [portal developer notes](docs/code/portal.md) | Developers |
+| [Diagrams](docs/diagrams/README.md) | Developers, instructor, reviewers |
+| [Acceptance results](docs/acceptance-results.md) | Testers, instructor |
+| [Changelog](CHANGELOG.md) | Everyone |
+| [Team roles and deliverables](TEAM_ROLES.md) | Team, instructor |
+| [Release 0.5 enhancement benchmark](docs/enhancement-evaluation-v0.5.md) | Developers, instructor |

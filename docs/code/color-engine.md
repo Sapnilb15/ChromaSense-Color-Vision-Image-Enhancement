@@ -1,5 +1,7 @@
 # Color Engine
 
+**Who this is for:** developers who change or test the image pipeline, and evaluators who run the acceptance measurement. It is a reference for the package's public functions, the filter order, the defaults, and the tests.
+
 `src/color_engine/` is a separate Python package, `color_engine`, with no web framework dependency. It holds the image pipeline (five numbered filters) and the color rules they share. It makes no network calls and reads no environment variables.
 
 ## Pipeline filters
@@ -24,6 +26,14 @@ Each filter takes plain data and returns plain data. No filter calls another; th
 | `rules/encode.py` | `encode_png(pixels)` |
 
 Models are in `color_engine/models.py`: `CvdType` (`PROTAN`, `DEUTAN`), `CvdProfile` (type and a severity from 0 to 1), `InputLimits` (10 MB, 12 megapixels), and each filter's output class.
+
+## Code documentation
+
+Every public module, class, and function has a [PEP 257](https://peps.python.org/pep-0257/) docstring in Google style. Public filters and color rules also document `Args`, `Returns`, and `Raises`, with array shapes and dtypes. Ruff's pydocstyle rules check this, and tests are exempt:
+
+```bash
+docker compose run --rm dev ruff check .
+```
 
 ## Defaults
 

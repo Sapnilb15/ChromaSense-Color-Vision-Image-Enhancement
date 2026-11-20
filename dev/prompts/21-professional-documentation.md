@@ -58,7 +58,7 @@ The code and the documentation set meet a named standard: Google-style docstring
 | User guide | Numbered task steps with the expected result of each; the input limits; every status message with its meaning and what to do next; keyboard and screen reader use; data retention |
 | Developer notes | Every public filter, rule, use case, endpoint, and setting; the filter order; how to run the tests |
 | Diagrams README | A text alternative for each SVG; the source link; the command that regenerates it |
-| `CHANGELOG.md` | Each release with Added, Changed, and Removed entries |
+| `CHANGELOG.md` | Each release from 1.0 on with Added, Changed, and Removed entries; 0.5 points to its tag |
 | Code | Ruff `D` clean; `Args`, `Returns`, and `Raises` on the public Color Engine API and on each use case `execute`; a header comment on each JavaScript file |
 
 ### Verification

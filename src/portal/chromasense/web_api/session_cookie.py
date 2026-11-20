@@ -18,5 +18,6 @@ def session_id_from(request: Request) -> tuple[str, bool]:
 
 
 def set_session_cookie(response: Response, session_id: str) -> None:
+    """Set the HTTP-only, SameSite=Lax session cookie on the response."""
     # The portal uses plain HTTP on the local network, so the cookie cannot be Secure.
     response.set_cookie(COOKIE_NAME, session_id, httponly=True, samesite="lax")

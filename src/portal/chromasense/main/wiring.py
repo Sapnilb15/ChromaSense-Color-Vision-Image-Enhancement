@@ -30,13 +30,28 @@ TEMPLATES_DIR = Path(chromasense.__file__).parent / "web_ui" / "templates"
 
 
 class SystemClock:
+    """``Clock`` that reads the system time in UTC."""
+
     def now(self) -> datetime:
+        """Return the current time in UTC."""
         return datetime.now(UTC)
 
 
 def build_app(
     settings: Settings, purge_interval_seconds: float = PURGE_INTERVAL_SECONDS
 ) -> FastAPI:
+    """Construct every part, wire them together, and return the FastAPI app.
+
+    At startup the app deletes every leftover session folder, then purges idle sessions
+    at each interval until it shuts down.
+
+    Args:
+        settings: The server configuration.
+        purge_interval_seconds: Seconds between idle session purges. Defaults to 60.
+
+    Returns:
+        The app, ready for Uvicorn.
+    """
     clock = SystemClock()
     store = FilesystemSessionImageStore(Path(settings.data_dir))
     processing = ProcessingSettings(

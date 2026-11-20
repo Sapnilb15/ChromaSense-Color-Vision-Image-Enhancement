@@ -24,6 +24,7 @@ router = APIRouter(prefix="/api/image")
 
 @router.post("", status_code=201, response_model=UploadResponseBody)
 async def upload(request: Request, file: Annotated[UploadFile, File()]):
+    """Replace the session's image with the uploaded file (``ProcessUpload``)."""
     max_bytes = request.app.state.max_upload_bytes
     # Read one byte past the limit, so an oversized body is refused before any decoding.
     data = await file.read(max_bytes + 1)
@@ -39,6 +40,7 @@ async def upload(request: Request, file: Annotated[UploadFile, File()]):
 
 @router.post("/enhance", response_model=EnhanceResponseBody)
 def enhance(request: Request, body: EnhanceRequestBody):
+    """Enhance the session's image for a profile and severity (``EnhanceImage``)."""
     profile = CvdProfile(CvdType(body.type), body.severity)
     result = request.app.state.use_cases.enhance_image.execute(
         EnhanceImageRequest(session_id=request.state.session_id, profile=profile)
@@ -54,6 +56,7 @@ def enhance(request: Request, body: EnhanceRequestBody):
 
 @router.get("/view/{view}")
 def view(request: Request, view: Literal["original", "enhanced"]):
+    """Return the original or enhanced image as an uncached PNG (``RenderView``)."""
     result = request.app.state.use_cases.render_view.execute(
         RenderViewRequest(session_id=request.state.session_id, view=View(view))
     )
@@ -62,6 +65,7 @@ def view(request: Request, view: Literal["original", "enhanced"]):
 
 @router.get("/export")
 def export(request: Request):
+    """Return the enhanced image as a PNG attachment (``ExportImage``)."""
     result = request.app.state.use_cases.export_image.execute(
         ExportImageRequest(session_id=request.state.session_id)
     )

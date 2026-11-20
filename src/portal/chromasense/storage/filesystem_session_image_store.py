@@ -28,11 +28,21 @@ _RESULT_FILES = ("result.json", "result.npz", "enhanced.npy")
 
 
 class FilesystemSessionImageStore:
+    """``SessionImageStore`` on the local filesystem, with one folder for each session.
+
+    Every method raises ``ValueError`` if the session ID is not 16 to 128 URL-safe
+    characters, so an ID can never name a path outside the sessions folder.
+
+    Args:
+        root: The data folder. Sessions are kept in ``root/sessions/``, created if missing.
+    """
+
     def __init__(self, root: Path) -> None:
         self._sessions = Path(root) / "sessions"
         self._sessions.mkdir(parents=True, exist_ok=True)
 
     def save_original(self, session_id: str, image: SessionImage) -> None:
+        """Store the original image, deleting the old result first."""
         folder = self._folder(session_id, create=True)
         # Remove the old result first, so it can never be paired with the new original.
         for name in _RESULT_FILES:
@@ -50,6 +60,7 @@ class FilesystemSessionImageStore:
         )
 
     def load_original(self, session_id: str) -> SessionImage | None:
+        """Return the stored original image, or None if there is none."""
         folder = self._folder(session_id)
         try:
             meta = json.loads((folder / "original.json").read_text(encoding="utf-8"))
@@ -66,6 +77,7 @@ class FilesystemSessionImageStore:
         )
 
     def save_result(self, session_id: str, result: EnhancementResult) -> None:
+        """Store the enhancement result, writing ``result.json`` last."""
         folder = self._folder(session_id, create=True)
         if result.enhanced_pixels is None:
             (folder / "enhanced.npy").unlink(missing_ok=True)
@@ -105,6 +117,7 @@ class FilesystemSessionImageStore:
         )
 
     def load_result(self, session_id: str) -> EnhancementResult | None:
+        """Return the stored enhancement result, or None if there is none."""
         folder = self._folder(session_id)
         try:
             meta = json.loads((folder / "result.json").read_text(encoding="utf-8"))
@@ -138,9 +151,11 @@ class FilesystemSessionImageStore:
         )
 
     def delete_session(self, session_id: str) -> None:
+        """Delete the session's folder and everything in it."""
         shutil.rmtree(self._folder(session_id), ignore_errors=True)
 
     def idle_sessions(self, before: datetime) -> list[str]:
+        """Return the IDs of session folders last used before the given time."""
         cutoff = before.timestamp()
         idle = []
         for folder in sorted(self._sessions.iterdir()):
@@ -153,6 +168,7 @@ class FilesystemSessionImageStore:
         return idle
 
     def touch(self, session_id: str, now: datetime) -> None:
+        """Set the session's ``last_used`` time, creating its folder if needed."""
         marker = self._folder(session_id, create=True) / "last_used"
         marker.touch()
         os.utime(marker, (now.timestamp(), now.timestamp()))

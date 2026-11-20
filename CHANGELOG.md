@@ -31,6 +31,8 @@ The requirements went from about 110 rows in 0.5 to 18. Release 0.5 is available
 - A message when enhancement could not improve a confusable pair
 - A requirement that the app makes no medical, diagnostic, or exact-perception claims
 - SVG renders of the architecture diagrams, generated from their Mermaid sources
+- Google-style docstrings on every public module, class, and function, checked in CI by Ruff
+- An audience statement at the top of each document, with the documentation set following ISO/IEC/IEEE 26514:2022
 
 ### Kept from 0.5
 

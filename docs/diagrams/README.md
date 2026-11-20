@@ -1,5 +1,7 @@
 # Diagrams
 
+**Who this is for:** developers, the course instructor, and reviewers who need the system's design at a glance. Each diagram also has a text description for screen reader users.
+
 Each diagram has a Mermaid source (`.mmd`) and an SVG generated from it. Edit only the `.mmd` files, then regenerate every SVG from the repository root:
 
 ```bash

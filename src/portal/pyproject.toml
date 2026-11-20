@@ -37,7 +37,15 @@ line-length = 100
 src = [".", "../color_engine"]
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "I", "B", "UP"]
+select = ["E", "F", "W", "I", "B", "UP", "D"]
+# Magic methods need no docstring; __init__ arguments go in the class docstring (Google style).
+ignore = ["D105", "D107"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D"]
 
 # Dependency rules from dev/architecture.md (Hard constraints). Do not weaken them.
 [tool.importlinter]
