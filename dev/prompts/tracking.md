@@ -20,7 +20,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | 10 | Acceptance evaluation                     | CRITICAL | 🟡 yellow      | Held-out set not supplied (test skips); measurement verified on dev images         |
 | 11 | Application Core and the upload use case  | CRITICAL | 🟢 green       | 11 core tests pass with fakes; no web framework needed; 4 contracts kept           |
 | 12 | Enhance use case and outcome policy       | Standard | 🟢 green       | All 3 outcomes and messages right; palette computed once across profiles           |
-| 13 | View and export use cases                 | Standard | ⚪ not started |                                                                                    |
+| 13 | View and export use cases                 | Standard | 🟢 green       | PNG round trips exact; export 0 pixels changed outside mask                        |
 | 14 | Session storage and cleanup               | Standard | ⚪ not started |                                                                                    |
 | 15 | Server and HTTP API                       | CRITICAL | ⚪ not started |                                                                                    |
 | 16 | Page, upload, and status messages         | Standard | ⚪ not started |                                                                                    |
@@ -266,7 +266,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 
 **File:** `13-view-and-export.md`  
 **SRS IDs:** SRS-FR-004, SRS-FR-008, SRS-FR-010, SRS-FR-007  
-**Status:** ⚪ not started
+**Status:** 🟢 green
 
 | Zone   | Criterion |
 | ------ | --------- |
@@ -274,6 +274,8 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | Green  | Original and export decode to stored pixels; 0 pixels changed outside mask |
 | Yellow | Correct, but a missing-image message differs |
 | Red    | Export not PNG, or a pixel changed outside the mask |
+
+**Result:** `RenderView` returns PNGs that decode exactly to the stored original and enhanced pixels. `ExportImage` returns `chromasense-enhanced.png` at the original size, decoding to the stored enhanced pixels, with 0 pixels changed outside the mask. After a `NO_CONFUSABLE_PAIRS` outcome, before enhancing, or after a new upload, the enhanced view and the export raise `NoImageInSession` with the increment's messages. Portal tests 36, engine tests 149 passed and 1 skipped.
 
 ### 14 · Session storage and cleanup
 

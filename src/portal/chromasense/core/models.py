@@ -64,3 +64,8 @@ class EnhancementResult:
     eligible_count: int
     improved_count: int
     newly_confusable_count: int
+
+
+class View(Enum):
+    ORIGINAL = "original"
+    ENHANCED = "enhanced"
