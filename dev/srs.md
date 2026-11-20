@@ -82,6 +82,7 @@ ChromaSense is a new, self-contained product. It runs on a development server on
 | SRS-NFR-005 | The app shall not require a user account or retain uploaded pictures after the active session ends. (NFR-05) | must | Session cleanup removes the original and processed files. |
 | SRS-NFR-006 | The app shall not represent its output as medical advice, a color vision diagnosis, or an exact reconstruction of typical color perception. (NFR-06) | must | Interface copy and help text avoid those claims. |
 | SRS-NFR-007 | Enhancement shall improve simulated perceptual separation for at least 80 percent of eligible color pairs for each profile on the held-out test set. (Section 1.1) | must | The acceptance evaluation reports the improved and eligible pair counts for each profile, and the ratio is at least 80 percent. |
+| SRS-NFR-008 | The project shall provide professional software documentation: a PEP 257 docstring in Google style on every public module, class, and function, and a documentation set (README, user guide, developer notes for each package, architecture diagrams, changelog) whose content follows ISO/IEC/IEEE 26514:2022 for audience, purpose, task steps, reference completeness, messages, and limits. (Team addition, November 2026) | must | `ruff check .` with the pydocstyle rules reports no findings, and a review of each document against the documentation checklist passes. |
 
 ## Optional: External interfaces
 
@@ -108,7 +109,7 @@ ChromaSense is a new, self-contained product. It runs on a development server on
 
 ## Optional: Software attributes
 
-none
+- Maintainability: documented code and a standard documentation set (SRS-NFR-008)
 
 ## Optional: Acceptance plan
 

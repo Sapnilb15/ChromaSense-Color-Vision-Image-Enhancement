@@ -143,7 +143,7 @@ Language, runtime, frameworks, and build tool.
 - **Imaging and color**: NumPy, Pillow (decode, color profile conversion, EXIF orientation, PNG encoding), scikit-image for CIELAB and CIEDE2000, scikit-learn for k-means
 - **Storage**: Local filesystem, on a Docker volume
 - **Build and packaging**: `pyproject.toml` for each Python package, installed with pip in the Docker image build
-- **Quality**: pytest and pytest-cov, DaltonLens as a test-only reference for simulation, Ruff for linting and formatting, import-linter for dependency rules, Playwright with axe-playwright-python for browser and accessibility tests, and GitHub Actions for pull request checks
+- **Quality**: pytest and pytest-cov, DaltonLens as a test-only reference for simulation, Ruff for linting, formatting, and docstrings (pydocstyle `D` rules, Google convention), import-linter for dependency rules, Playwright with axe-playwright-python for browser and accessibility tests, and GitHub Actions for pull request checks
 - **Test host**: the Docker container limited to 4 CPU cores and 8 GB of memory, used for SRS-NFR-001 timing runs
 
 ## Required: Hard constraints
@@ -164,6 +164,7 @@ Rules that the agent must not break. Examples: a required library, a required fo
 - Every status message has text, and no control or state is shown by color alone. (SRS-NFR-003)
 - Add no account system, database, message queue, separate worker service, or second web framework.
 - Each filter takes plain data and returns plain data, and no filter calls another filter. Only the Application Core use case decides the order.
+- Every public module, class, and function in `src/` has a Google-style docstring. Public Color Engine functions and each use case `execute` also document `Args`, `Returns`, and `Raises`. Each document in the documentation set states its audience and purpose. (SRS-NFR-008)
 
 ## Required: Decisions
 

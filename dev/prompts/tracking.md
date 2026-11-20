@@ -28,6 +28,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | 18 | Accessibility, layout, and interface copy | CRITICAL | 🟢 green       | 0 axe violations (22 rules); keyboard run; no scroll at 375/1280; copy clean       |
 | 19 | Processing time                           | Standard | 🟢 green       | 12 MP in 7.0 s (PNG) and 10.3 s (noisy JPEG); 20 MP rejected in 0.001 s            |
 | 20 | Documentation and diagrams                | Standard | 🟢 green       | 3 diagrams with SVGs (no diff on regenerate); docs written; all links resolve      |
+| 21 | Professional documentation                | Standard | ⚪ not started |                                                                                    |
 
 ## Increments
 
@@ -443,4 +444,19 @@ A 20 megapixel PNG is rejected with `TOO_MANY_PIXELS` in 0.001 s. No engine chan
 
 - Pipeline node labels read "Filter 1: decode_1" and so on, not "1. decode_1". *Why:* Mermaid parses a label starting with "1." as a Markdown list and rendered every box as "Unsupported markdown: list"; a PNG preview caught it before commit.
 
+### 21 · Professional documentation
 
+**File:** `21-professional-documentation.md`  
+**SRS IDs:** SRS-NFR-008  
+**Status:** ⚪ not started
+
+| Zone   | Criterion |
+| ------ | --------- |
+| Metric | Ruff `D` findings; documentation checklist review |
+| Green  | 0 findings; every checklist row met; all other checks pass with the same counts |
+| Yellow | 0 findings, but a checklist row is only partly met |
+| Red    | Ruff findings remain, behavior or tests changed, or a document claims behavior that does not exist |
+
+**Result:**
+
+**Notes:**
