@@ -22,7 +22,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | 12 | Enhance use case and outcome policy       | Standard | 🟢 green       | All 3 outcomes and messages right; palette computed once across profiles           |
 | 13 | View and export use cases                 | Standard | 🟢 green       | PNG round trips exact; export 0 pixels changed outside mask                        |
 | 14 | Session storage and cleanup               | Standard | 🟢 green       | 0 files left after end or idle purge; bad session IDs rejected                     |
-| 15 | Server and HTTP API                       | CRITICAL | ⚪ not started |                                                                                    |
+| 15 | Server and HTTP API                       | CRITICAL | 🟢 green       | All 6 endpoints live on 9090; 413 before decode; 0 sessions after restart          |
 | 16 | Page, upload, and status messages         | Standard | ⚪ not started |                                                                                    |
 | 17 | Profile, comparison, and download         | Standard | ⚪ not started |                                                                                    |
 | 18 | Accessibility, layout, and interface copy | CRITICAL | ⚪ not started |                                                                                    |
@@ -301,7 +301,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 
 **File:** `15-server-and-api.md`  
 **SRS IDs:** SRS-FR-001, SRS-FR-002, SRS-FR-010, SRS-FR-011, SRS-NFR-004, SRS-NFR-005  
-**Status:** ⚪ not started
+**Status:** 🟢 green
 
 | Zone   | Criterion |
 | ------ | --------- |
@@ -309,6 +309,19 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | Green  | Every table row passes; 413 before decode; no folders after restart |
 | Yellow | Works on localhost but not tested from another device |
 | Red    | `lint-imports` fails, a router holds a rule, or session files survive restart |
+
+**Result:** 100 portal tests pass: every endpoint row with fake use cases (cookie set, 11 MB body refused with 413 before the use case runs, rejection reasons mapped to 413, 415, and 422, missing image mapped to 404, invalid bodies and views to 422), plus `build_app` with the real engine on a temporary folder (full workflow, end session, startup cleanup, background purge). Live `docker compose up portal` on port 9090: upload 201, original view `image/png`, deutan enhance `enhanced` (7.0 → 13.6), export as `attachment; filename="chromasense-enhanced.png"`, renamed text file 415, 11 MB upload 413 in 0.09 s, end session 204 leaves 0 session folders, and a restart leaves 0 session folders. The port is published on `0.0.0.0:9090`, and the host's LAN address answers 200. Not yet checked from a second device on the network. `lint-imports`: 4 contracts kept.
+
+**Notes:**
+
+- The session cookie is set in an HTTP middleware, not per endpoint. *Why:* FastAPI does not add cookies from an injected `Response` to a `Response` the endpoint returns directly, which the PNG endpoints do.
+- `FastAPI(..., openapi_url=None)` as well as `docs_url=None` and `redoc_url=None`. *Why:* the route test found `/openapi.json`, which the increment's "add no other endpoint" forbids.
+- Request validation errors use the same body as every other error: `{"reason": "invalid_request", "message": "The request is not valid."}`.
+- The upload parameter is `Annotated[UploadFile, File()]`. *Why:* Ruff's B008 rule rejects `File(...)` as a default argument, and this is FastAPI's current form.
+- The background purge catches and logs any error (by type only, never paths or image data) and keeps running, so one failure does not stop all later purges.
+- FastAPI 0.165 includes routers lazily, so `app.routes` holds only wrappers. The route test lists the three routers' routes and checks that `/openapi.json`, `/docs`, and `/redoc` return 404.
+- `TestClient` prints a Starlette deprecation warning that suggests `httpx2` instead of `httpx`. Tests pass; revisit if a later Starlette removes `httpx` support.
+- The settings and `build_app` integration tests are in `src/portal/tests/web_api/`, since the tree has no `tests/main/` folder.
 
 ### 16 · Page, upload, and status messages
 
