@@ -18,7 +18,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | 08 | Targeted enhancement (filter 4)           | CRITICAL | 🟢 green       | 0 pixels changed outside mask; L gap 20.5 deutan, 21.9 protan; no banding          |
 | 09 | Separation check (filter 5)               | Standard | 🟢 green       | Both pairs improved (deutan 7.0 → 13.6, protan 1.2 → 8.4); coverage 98.2 %         |
 | 10 | Acceptance evaluation                     | CRITICAL | 🟡 yellow      | Held-out set not supplied (test skips); measurement verified on dev images         |
-| 11 | Application Core and the upload use case  | CRITICAL | ⚪ not started |                                                                                    |
+| 11 | Application Core and the upload use case  | CRITICAL | 🟢 green       | 11 core tests pass with fakes; no web framework needed; 4 contracts kept           |
 | 12 | Enhance use case and outcome policy       | Standard | ⚪ not started |                                                                                    |
 | 13 | View and export use cases                 | Standard | ⚪ not started |                                                                                    |
 | 14 | Session storage and cleanup               | Standard | ⚪ not started |                                                                                    |
@@ -224,7 +224,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 
 **File:** `11-core-and-upload.md`  
 **SRS IDs:** SRS-FR-001, SRS-FR-002, SRS-FR-004, SRS-FR-011, SRS-NFR-004  
-**Status:** ⚪ not started
+**Status:** 🟢 green
 
 | Zone   | Criterion |
 | ------ | --------- |
@@ -232,6 +232,14 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | Green  | All pass; each rejection has its reason and message; replacement works |
 | Yellow | Tests pass but a message differs from the increment |
 | Red    | Core imports an outer part, or a rejected file is stored |
+
+**Result:** `ProcessUpload` stores valid PNG and JPEG uploads; every invalid sample from increment 05 and an 11 MB file raise `UploadRejected` with the increment's reason and message, and nothing is stored or touched. A second upload replaces the first and discards the result; a rejected upload leaves the session unchanged. Isolation: the 11 core tests pass in a clean Python 3.11 container with FastAPI, Starlette, and Uvicorn not installed. `lint-imports`: 4 contracts kept.
+
+**Notes:**
+
+- `SessionImageStore.save_result` and `load_result` use the quoted forward reference `"EnhancementResult"` with `# noqa: F821`. *Why:* the increment says to use a forward reference until increment 12 adds the model; Ruff flags an undefined name in a string annotation without the `noqa`. Remove the `noqa` in increment 12.
+- `src/portal/pyproject.toml` has `[tool.pytest.ini_options]` with `testpaths = ["tests"]` and `--import-mode=importlib`, as the engine does. *Why:* keeps test module names in the engine and portal from colliding.
+- The port fakes live in `src/portal/tests/core/conftest.py` as fixtures, and portal tests read the committed samples from `src/color_engine/tests/data/samples/`.
 
 ### 12 · Enhance use case and outcome policy
 
