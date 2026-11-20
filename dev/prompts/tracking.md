@@ -16,7 +16,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | 06 | Palette extraction (filter 2)             | Standard | 🟢 green       | Known colors within 2; runs identical; 12 MP in 2.4 s                              |
 | 07 | Confusion detection (filter 3)            | Standard | 🟢 green       | Red–green flagged (deutan 7.0, protan 1.2); red–blue not; mask exact               |
 | 08 | Targeted enhancement (filter 4)           | CRITICAL | 🟢 green       | 0 pixels changed outside mask; L gap 20.5 deutan, 21.9 protan; no banding          |
-| 09 | Separation check (filter 5)               | Standard | ⚪ not started |                                                                                    |
+| 09 | Separation check (filter 5)               | Standard | 🟢 green       | Both pairs improved (deutan 7.0 → 13.6, protan 1.2 → 8.4); coverage 98.2 %         |
 | 10 | Acceptance evaluation                     | CRITICAL | ⚪ not started |                                                                                    |
 | 11 | Application Core and the upload use case  | CRITICAL | ⚪ not started |                                                                                    |
 | 12 | Enhance use case and outcome policy       | Standard | ⚪ not started |                                                                                    |
@@ -185,7 +185,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 
 **File:** `09-separation-check.md`  
 **SRS IDs:** SRS-FR-009, SRS-NFR-007  
-**Status:** ⚪ not started
+**Status:** 🟢 green
 
 | Zone   | Criterion |
 | ------ | --------- |
@@ -193,6 +193,12 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | Green  | Counts as specified; engine coverage at least 70 percent |
 | Yellow | Counts right; coverage 60 to 70 percent |
 | Red    | A count wrong, or coverage under 60 percent |
+
+**Result:** On the flat graphics each report has `eligible_count == 1`, `improved_count == 1`, and no newly confusable pairs. Simulated distance before → after: deutan red–green 7.0 → 13.6, protan red–green 1.2 → 8.4. Engine tests 148, coverage 98.2 %.
+
+**Notes:**
+
+- Risk for increment 10: "improved" means the simulated distance grew (Decision 2), not that the pair is no longer confusable. The protan test pair improves from 1.2 to 8.4 but stays below the threshold of 10, so re-running detection would still flag it. *Why:* the 80 percent target counts improved pairs, so it can pass while some pairs stay confusable. Report pairs that end above the threshold alongside the improved count.
 
 ### 10 · Acceptance evaluation  ⚠ CRITICAL
 

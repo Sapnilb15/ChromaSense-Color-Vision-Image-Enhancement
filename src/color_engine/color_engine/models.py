@@ -90,3 +90,22 @@ class EnhancedImage4:
     pixels: NDArray[np.uint8]
     palette_lab_after: NDArray[np.float64]
     changed: NDArray[np.bool_]
+
+
+@dataclass(frozen=True)
+class PairSeparation:
+    a: int
+    b: int
+    before: float
+    after: float
+    improved: bool
+
+
+@dataclass(frozen=True)
+class SeparationReport5:
+    """Simulated separation of each flagged pair before and after enhancement."""
+
+    pairs: tuple[PairSeparation, ...]
+    newly_confusable: tuple[tuple[int, int], ...]
+    eligible_count: int
+    improved_count: int
