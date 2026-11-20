@@ -26,7 +26,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | 16 | Page, upload, and status messages         | Standard | 🟢 green       | Upload shows original; errors show reason; tab close ends session                  |
 | 17 | Profile, comparison, and download         | Standard | 🟢 green       | Profiles, limits, slider, and PNG download work; no-pair case hides download       |
 | 18 | Accessibility, layout, and interface copy | CRITICAL | 🟢 green       | 0 axe violations (22 rules); keyboard run; no scroll at 375/1280; copy clean       |
-| 19 | Processing time                           | Standard | ⚪ not started |                                                                                    |
+| 19 | Processing time                           | Standard | 🟢 green       | 12 MP in 7.0 s (PNG) and 10.3 s (noisy JPEG); 20 MP rejected in 0.001 s            |
 | 20 | Documentation and diagrams                | Standard | ⚪ not started |                                                                                    |
 
 ## Increments
@@ -398,7 +398,7 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 
 **File:** `19-processing-time.md`  
 **SRS IDs:** SRS-NFR-001  
-**Status:** ⚪ not started
+**Status:** 🟢 green
 
 | Zone   | Criterion |
 | ------ | --------- |
@@ -406,6 +406,21 @@ Status values: ⚪ not started, 🟢 green, 🟡 yellow, 🔴 red, ↩️ rolled
 | Green  | Under 30 s; rejection under 2 s |
 | Yellow | 30 to 45 s |
 | Red    | Over 45 s, or a speed fix changed a result |
+
+**Result:** On the `dev` container limited to 4 CPUs and 8 GB, upload, deutan enhancement at severity 1.0, and export with the real engine and filesystem store:
+
+| Image | Upload | Enhance | Export | Total |
+| --- | --- | --- | --- | --- |
+| 12 MP PNG, ±10 noise in 2 × 2 cells (7.7 MB) | 0.2 s | 4.3 s | 2.5 s | 7.0 s |
+| 12 MP JPEG, ±20 noise on every pixel (4.0 MB) | 0.1 s | 6.5 s | 3.7 s | 10.3 s |
+
+A 20 megapixel PNG is rejected with `TOO_MANY_PIXELS` in 0.001 s. No engine change was needed. Portal tests 142.
+
+**Notes:**
+
+- The PNG uses noise drawn at half resolution and repeated in 2 × 2 cells. *Why:* the increment asks for a 12 megapixel PNG with per-pixel noise under 10 MB, but per-pixel noise does not compress: even ±1 noise makes an 11.0 MB PNG. The test adds a JPEG with independent noise on every pixel as the photo-like worst case for the distinct-color steps in filters 2 and 4.
+- `nproc` reports 16 inside the container. Compose's `cpus: 4` limits CPU time, not the visible core count, so the timings still reflect 4 CPUs.
+- The `performance` marker is registered in `src/portal/pyproject.toml`. The tests also run in the normal portal suite and in CI, whose runners are not the reference host.
 
 ### 20 · Documentation and diagrams
 
