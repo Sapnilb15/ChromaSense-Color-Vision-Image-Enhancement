@@ -40,11 +40,14 @@ ZIP_URL = "https://huggingface.co/datasets/ahmed-masry/ChartQA/resolve/main/Char
 ZIP_ROOT = "ChartQA Dataset"
 BAR_TYPES = ("v_bar", "h_bar")
 
-# A bar is kept only when its inset interior is a flat fill matching the annotated color.
+# A bar is kept only when its inset interior is a flat fill near the annotated color. The fill's
+# measured color is the reference, because some sources (Our World in Data) draw bars with
+# partial opacity, so the rendered color sits several units of CIEDE2000 from the annotated hex.
 INSET = 2
 MIN_SIDE = 4
-MAX_COLOR_ERROR = 2.0
-MIN_MATCHING_SHARE = 0.95
+MAX_FILL_SPREAD = 2.0
+MIN_FILL_SHARE = 0.95
+MAX_ANNOTATION_ERROR = 15.0
 
 
 class _HttpRangeFile(io.RawIOBase):
@@ -124,8 +127,13 @@ def _bars(annotation: dict) -> list[tuple[dict, tuple[int, int, int]]]:
     return bars
 
 
-def _verified_box(pixels: np.ndarray, box: dict, rgb: tuple[int, int, int]) -> list[int] | None:
-    """Return the inset [x, y, width, height] when its pixels are a flat fill of the color."""
+def _verified_box(
+    pixels: np.ndarray, box: dict, rgb: tuple[int, int, int]
+) -> tuple[list[int], list[int]] | None:
+    """Return the inset [x, y, width, height] and its fill color, when it is a flat fill.
+
+    The fill must also be near the annotated color, which rejects boxes that miss their bar.
+    """
     left = int(np.ceil(box["x"])) + INSET
     top = int(np.ceil(box["y"])) + INSET
     right = int(np.floor(box["x"] + box["w"])) - INSET
@@ -135,29 +143,31 @@ def _verified_box(pixels: np.ndarray, box: dict, rgb: tuple[int, int, int]) -> l
         return None
     if right - left < MIN_SIDE or bottom - top < MIN_SIDE:
         return None
-    region = rgb_to_lab(pixels[top:bottom, left:right]).reshape(-1, 3)
-    reference = rgb_to_lab(np.array([[rgb]], dtype=np.uint8))[0, 0]
-    errors = ciede2000(region, reference)
-    if float(np.median(errors)) > MAX_COLOR_ERROR:
+    fill_rgb = pixels[top:bottom, left:right].reshape(-1, 3)
+    fill = np.median(fill_rgb, axis=0).astype(np.uint8)
+    lab = rgb_to_lab(np.vstack([fill_rgb, fill, np.array(rgb, dtype=np.uint8)])[None])[0]
+    spread = ciede2000(lab[:-2], lab[-2])
+    if float(np.mean(spread <= MAX_FILL_SPREAD)) < MIN_FILL_SHARE:
         return None
-    if float(np.mean(errors <= MAX_COLOR_ERROR)) < MIN_MATCHING_SHARE:
+    if float(ciede2000(lab[-2], lab[-1])) > MAX_ANNOTATION_ERROR:
         return None
-    return [left, top, right - left, bottom - top]
+    return [left, top, right - left, bottom - top], fill.tolist()
 
 
 def _regions(pixels: np.ndarray, annotation: dict) -> list[dict]:
-    """Return one verified region per distinct bar color, using that color's largest bar."""
-    largest: dict[tuple[int, int, int], list[int]] = {}
+    """Return one verified region per annotated bar color, using that color's largest bar."""
+    largest: dict[tuple[int, int, int], tuple[list[int], list[int]]] = {}
     for box, rgb in _bars(annotation):
         verified = _verified_box(pixels, box, rgb)
         if verified is None:
             continue
         current = largest.get(rgb)
-        if current is None or verified[2] * verified[3] > current[2] * current[3]:
+        area = verified[0][2] * verified[0][3]
+        if current is None or area > current[0][2] * current[0][3]:
             largest[rgb] = verified
     return [
-        {"id": f"bar-{index}", "box": box, "reference_rgb": list(rgb)}
-        for index, (rgb, box) in enumerate(largest.items())
+        {"id": f"bar-{index}", "box": box, "reference_rgb": fill}
+        for index, (box, fill) in enumerate(largest.values())
     ]
 
 
@@ -180,6 +190,7 @@ def _eligible_pairs(regions: list[dict], threshold: float, severity: float) -> d
 
 
 def build(args: argparse.Namespace) -> None:
+    """Write the split's verified bar charts and their labels.json to the output folder."""
     out: Path = args.out
     out.mkdir(parents=True, exist_ok=True)
     archive = _open_zip(args.zip)
@@ -254,6 +265,7 @@ def evaluate(args: argparse.Namespace) -> None:
 
 
 def main() -> None:
+    """Parse the command line and run the build or evaluate command."""
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     commands = parser.add_subparsers(dest="command", required=True)
 
