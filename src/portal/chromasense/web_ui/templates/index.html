@@ -11,7 +11,7 @@
           <img class="art" alt="" src="/static/contours.svg">
           <h3>Drop your image here</h3><p>or select a file from your device</p>
         </div>
-        <div class="file-button"><label class="picker" for="file-input">{{ icon('upload') }} <span id="picker-caption" aria-hidden="true">Browse files</span>
+        <div class="file-button"><label class="picker" for="file-input">{{ icon('upload') }} <span id="picker-caption">Browse files</span>
           <span class="sr-only">Choose a PNG or JPEG image</span></label>
         <input type="file" id="file-input" name="file" accept="image/png,image/jpeg" aria-describedby="file-limits"></div>
       </div>
@@ -31,6 +31,7 @@
           <div><dt>Improved pairs</dt><dd id="improved"></dd></div>
           <div id="share"><dt>Share improved</dt><dd id="percent"></dd></div>
         </dl>
+        <small>Pair counts reflect simulated color separation.</small>
         <div id="download-section"><a id="download-link" href="/api/image/export" download>Download enhanced PNG</a></div>
       </section>
     </div>

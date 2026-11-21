@@ -18,6 +18,7 @@ function syncControls() {
   button.setAttribute("aria-disabled", String(button.disabled || busy));
   input.setAttribute("aria-disabled", String(busy));
   profile.disabled = severity.disabled = busy;
+  stage.setAttribute("aria-busy", String(busy));
   byId("enhance-hint").hidden = !button.disabled;
 }
 
@@ -159,3 +160,7 @@ theme.addEventListener("click", () => {
   try { localStorage.setItem("theme", document.documentElement.dataset.theme); } catch { /* Storage is optional. */ }
 });
 updateSettings();
+
+window.addEventListener("pageshow", (event) => {
+  if (event.persisted) window.location.reload();
+});

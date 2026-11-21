@@ -141,3 +141,8 @@ figcaption { overflow-wrap: anywhere; padding-top: 10px; }
 #metrics dd { margin: 2px 0 0; color: var(--text); font: 600 1.1rem var(--mono); }
 :root[data-theme="light"] input { accent-color: #785b28; }
 .primary[aria-disabled="true"], .file-button:has([aria-disabled="true"]) { opacity: .8; }
+
+.stage.loaded { background-image: none; }
+.split .original { left: 8px; right: auto; }
+#mode[aria-pressed="true"] { box-shadow: inset 0 -3px var(--accent); }
+.split .tile img { height: auto; max-height: 52vh; }
