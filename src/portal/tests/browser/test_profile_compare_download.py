@@ -47,23 +47,23 @@ def test_only_protan_and_deutan_are_offered(page):
     expect(page.locator('input[name="cvd-type"]:checked')).to_have_count(0)
 
 
-@pytest.mark.parametrize(("profile", "severity"), [("Protan", "0"), ("Deutan", "1")])
+@pytest.mark.parametrize(("profile", "severity"), [("Protan", "0"), ("Deutan", "100")])
 def test_profile_and_severity_limits_are_sent(page, sample, profile, severity):
     bodies = _enhance_requests(page)
     _upload(page, sample("valid.png"))
     page.get_by_label(profile).check()
     page.locator("#severity").fill(severity)
-    expect(page.locator("#severity-value")).to_have_text(f"{float(severity):.2f}")
+    expect(page.locator("#severity-value")).to_have_text(f"{severity}%")
     page.get_by_role("button", name="Enhance image").click()
     expect(page.locator("#status")).to_contain_text("Done:")
-    assert bodies == [{"type": profile.lower(), "severity": float(severity)}]
+    assert bodies == [{"type": profile.lower(), "severity": float(severity) / 100}]
 
 
-def test_severity_starts_at_one(page):
-    expect(page.locator("#severity")).to_have_value("1")
-    expect(page.locator("#severity-value")).to_have_text("1.00")
+def test_severity_starts_at_full_strength(page):
+    expect(page.locator("#severity")).to_have_value("100")
+    expect(page.locator("#severity-value")).to_have_text("100%")
     expect(page.locator("#severity")).to_have_attribute("min", "0")
-    expect(page.locator("#severity")).to_have_attribute("max", "1")
+    expect(page.locator("#severity")).to_have_attribute("max", "100")
 
 
 def test_enhanced_result_compares_the_same_area_and_downloads_the_shown_png(page, sample, server):

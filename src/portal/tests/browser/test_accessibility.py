@@ -86,9 +86,9 @@ def test_full_workflow_by_keyboard_with_visible_focus(page, sample):
 
     stops.append(_tab_to(page, "severity"))
     page.keyboard.press("ArrowLeft")
-    expect(page.locator("#severity")).to_have_value("0.95")
+    expect(page.locator("#severity")).to_have_value("95")
     page.keyboard.press("End")
-    expect(page.locator("#severity")).to_have_value("1")
+    expect(page.locator("#severity")).to_have_value("100")
 
     stops.append(_tab_to(page, "enhance-button"))
     page.keyboard.press("Enter")
@@ -272,6 +272,7 @@ def test_axe_check_can_fail(page):
             const faint = document.createElement('p');
             faint.textContent = 'Faint text';
             faint.style.color = '#dddddd';
+            faint.style.backgroundColor = '#ffffff';
             document.getElementById('main').append(faint);
         }"""
     )
