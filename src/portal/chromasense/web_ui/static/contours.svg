@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 174 126">
+  <defs>
+    <clipPath id="edge"><rect width="78" height="78" rx="3"/></clipPath>
+    <path id="ring" vector-effect="non-scaling-stroke" d="M-25-5Q-30-20-16-22T8-19Q24-26 24-8T34 12Q32 26 17 23T-5 28Q-20 33-21 16T-25-5Z"/>
+  </defs>
+  <path d="m18 79 68-33 68 33-68 33Z" fill="#373b40" stroke="#808489"/>
+  <path d="m18 66 68-33 68 33-68 33Z" fill="#605b52" stroke="#a99c84"/>
+  <g transform="matrix(.87,-.42,.87,.42,18,52)" clip-path="url(#edge)">
+    <rect width="78" height="78" fill="#e7bf83"/>
+    <g transform="translate(26 28)" fill="none" stroke="#534635">
+      <use href="#ring" transform="scale(.18)"/><use href="#ring" transform="scale(.36)"/>
+      <use href="#ring" transform="scale(.56)"/><use href="#ring" transform="scale(.78)"/>
+      <use href="#ring"/><use href="#ring" transform="scale(1.24)"/>
+      <use href="#ring" transform="scale(1.5)"/><use href="#ring" transform="scale(1.76)"/>
+      <use href="#ring" transform="scale(2.02)"/><use href="#ring" transform="scale(2.32)"/>
+    </g>
+  </g>
+</svg>
