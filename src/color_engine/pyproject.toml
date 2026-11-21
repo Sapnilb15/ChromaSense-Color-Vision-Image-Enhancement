@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "color_engine"
+version = "1.0.0"
+description = "ChromaSense color rules and image pipeline filters"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy",
+    "Pillow",
+    "scikit-image",
+    "scikit-learn",
+]
+
+[project.optional-dependencies]
+test = ["pytest", "pytest-cov", "daltonlens"]
+
+[tool.setuptools.packages.find]
+include = ["color_engine*"]
+
+[tool.setuptools.package-data]
+color_engine = ["data/*"]
+
+# Same rules as src/portal/pyproject.toml. Ruff reads the nearest file with [tool.ruff].
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["."]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "D"]
+# Magic methods need no docstring; __init__ arguments go in the class docstring (Google style).
+ignore = ["D105", "D107"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--import-mode=importlib"
+
+[tool.coverage.run]
+source = ["color_engine"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true

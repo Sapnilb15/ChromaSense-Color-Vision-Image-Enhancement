@@ -1,0 +1,16 @@
+flowchart TB
+  subgraph boundary ["ChromaSense"]
+    webUi["Web UI"]
+    webApi["Web API"]
+    core["Application Core"]
+    engine["Color Engine"]
+    storage["Storage Adapter"]
+    main["Server Main"]
+  end
+  webUi -->|"HTTP on port 9090: multipart upload, JSON, PNG responses"| webApi
+  webApi -->|"Plain request and response models"| core
+  core -->|"Pixel arrays, CVD profile, threshold"| engine
+  core -->|"Port: session images and results"| storage
+  main -->|"Constructs and wires"| webApi
+  main -->|"Constructs and wires"| core
+  main -->|"Constructs and wires"| storage

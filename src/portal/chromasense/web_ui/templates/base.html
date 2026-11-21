@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}ChromaSense{% endblock %}</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="/static/css/app.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <header class="site-header">
+      <p class="site-name">ChromaSense</p>
+    </header>
+    <main id="main" tabindex="-1">
+      {% block content %}{% endblock %}
+    </main>
+    <footer class="site-footer">
+      <p>ChromaSense adjusts colors to help tell them apart. It does not diagnose color vision deficiency or give medical advice, and it does not show exactly what typical color vision sees.</p>
+    </footer>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Make confusable colors easier to tell apart</h1>
+<p class="intro">Upload a picture, choose a color vision profile and severity, compare the result with the original, and download it.</p>
+
+<section class="step" aria-labelledby="step-upload-heading">
+  <h2 id="step-upload-heading">Step 1: Upload a picture</h2>
+  <form id="upload-form" class="upload-form" novalidate>
+    <label for="file-input">Choose a PNG or JPEG image</label>
+    <input type="file" id="file-input" name="file" accept="image/png,image/jpeg" aria-describedby="file-limits">
+    <p id="file-limits" class="hint">PNG or JPEG, up to 10 MB and 12 megapixels.</p>
+  </form>
+</section>
+
+<div id="status" class="status" role="status" aria-live="polite"></div>
+
+<section id="original-section" class="step" aria-labelledby="original-heading" hidden>
+  <h2 id="original-heading">Original image</h2>
+  <figure class="image-figure">
+    <img id="original-image" alt="Original image">
+    <figcaption id="original-caption"></figcaption>
+  </figure>
+</section>
+
+<section class="step" aria-labelledby="step-profile-heading">
+  <h2 id="step-profile-heading">Step 2: Choose a profile and severity</h2>
+  <fieldset class="profile">
+    <legend>Color vision profile</legend>
+    <div class="choice">
+      <input type="radio" id="type-protan" name="cvd-type" value="protan">
+      <label for="type-protan">Protan</label>
+    </div>
+    <div class="choice">
+      <input type="radio" id="type-deutan" name="cvd-type" value="deutan">
+      <label for="type-deutan">Deutan</label>
+    </div>
+  </fieldset>
+  <div class="slider-field">
+    <label for="severity">Severity</label>
+    <input type="range" id="severity" min="0" max="1" step="0.05" value="1" aria-describedby="severity-hint">
+    <output id="severity-value" for="severity">1.00</output>
+    <p id="severity-hint" class="hint">0 applies no adjustment for the profile; 1 applies the full profile.</p>
+  </div>
+  <button type="button" id="enhance-button" class="button" disabled aria-describedby="enhance-hint">Enhance image</button>
+  <p id="enhance-hint" class="hint">Upload a picture and choose a profile to enable this button.</p>
+</section>
+
+<section id="compare-section" class="step" aria-labelledby="compare-heading" hidden>
+  <h2 id="compare-heading">Step 3: Compare and download</h2>
+  <p id="compare-message" class="compare-message"></p>
+  <p id="download-section" class="download-row" hidden>
+    <a id="download-link" class="button" href="/api/image/export" download="chromasense-enhanced.png">Download enhanced PNG</a>
+  </p>
+  <figure class="image-figure">
+    <div id="compare-frame" class="compare-frame">
+      <img id="compare-original" alt="Original image">
+      <img id="compare-enhanced" class="compare-enhanced" alt="">
+    </div>
+    <figcaption id="compare-caption"></figcaption>
+  </figure>
+  <div id="compare-control" class="slider-field">
+    <label for="compare-position">Comparison position</label>
+    <input type="range" id="compare-position" min="0" max="100" step="1" value="50" aria-describedby="compare-hint">
+    <output id="compare-value" for="compare-position">50 percent enhanced</output>
+    <p id="compare-hint" class="hint">The enhanced image covers the left part of the picture, as far as this position. Move it to compare the same area in both versions.</p>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="/static/js/upload.js"></script>
+<script type="module" src="/static/js/profile.js"></script>
+<script type="module" src="/static/js/session.js"></script>
+{% endblock %}

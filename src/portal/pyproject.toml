@@ -1,0 +1,89 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chromasense"
+version = "1.0.0"
+description = "ChromaSense web portal"
+requires-python = ">=3.11"
+dependencies = [
+    "color_engine",
+    "fastapi",
+    "uvicorn",
+    "python-multipart",
+    "jinja2",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "httpx",
+    "playwright",
+    "axe-playwright-python",
+    "ruff",
+    "import-linter",
+]
+
+[tool.setuptools.packages.find]
+include = ["chromasense*"]
+
+[tool.setuptools.package-data]
+chromasense = ["web_ui/**/*"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = [".", "../color_engine"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "D"]
+# Magic methods need no docstring; __init__ arguments go in the class docstring (Google style).
+ignore = ["D105", "D107"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D"]
+
+# Dependency rules from dev/architecture.md (Hard constraints). Do not weaken them.
+[tool.importlinter]
+root_packages = ["chromasense", "color_engine"]
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "Application Core does not import outer parts or the web framework"
+type = "forbidden"
+source_modules = ["chromasense.core"]
+forbidden_modules = [
+    "chromasense.web_api",
+    "chromasense.storage",
+    "chromasense.main",
+    "fastapi",
+    "starlette",
+    "uvicorn",
+]
+
+[[tool.importlinter.contracts]]
+name = "Color Engine does not import the portal, the web framework, or HTTP clients"
+type = "forbidden"
+source_modules = ["color_engine"]
+forbidden_modules = ["chromasense", "fastapi", "starlette", "uvicorn", "httpx"]
+
+[[tool.importlinter.contracts]]
+name = "Web API does not import the Storage Adapter"
+type = "forbidden"
+source_modules = ["chromasense.web_api"]
+forbidden_modules = ["chromasense.storage"]
+
+[[tool.importlinter.contracts]]
+name = "Storage Adapter does not import the Web API"
+type = "forbidden"
+source_modules = ["chromasense.storage"]
+forbidden_modules = ["chromasense.web_api"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--import-mode=importlib"
+markers = ["performance: timing tests for SRS-NFR-001, run on the reference host"]

@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build dev image
+        run: docker compose build dev
+
+      - name: Ruff lint
+        run: docker compose run --rm dev ruff check .
+
+      - name: Ruff format
+        run: docker compose run --rm dev ruff format --check .
+
+      - name: Dependency rules
+        run: docker compose run --rm dev lint-imports --config src/portal/pyproject.toml
+
+      - name: Color Engine tests without the web framework
+        run: docker build --target engine-test .
+
+      - name: Color Engine tests with coverage
+        run: docker compose run --rm dev pytest src/color_engine/tests --cov=color_engine --cov-fail-under=70
+
+      - name: Portal tests
+        run: docker compose run --rm dev pytest src/portal/tests
