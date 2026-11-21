@@ -134,3 +134,10 @@ figcaption { overflow-wrap: anywhere; padding-top: 10px; }
   #compare-frame.split { grid-template-columns: 1fr; }
   .split .tile img { height: 28vh; }
 }
+
+#result-profile { margin-top: 10px; font-size: .86rem; text-transform: capitalize; }
+#metrics { display: flex; flex-wrap: wrap; gap: 12px 24px; border-block: 1px solid var(--line); padding-block: 12px; }
+#metrics dt { font-size: .8rem; }
+#metrics dd { margin: 2px 0 0; color: var(--text); font: 600 1.1rem var(--mono); }
+:root[data-theme="light"] input { accent-color: #785b28; }
+.primary[aria-disabled="true"], .file-button:has([aria-disabled="true"]) { opacity: .8; }

@@ -17,7 +17,7 @@
       </div>
       <figure id="original-section" hidden><img id="original-image" alt="Original image"><figcaption><span id="original-caption"></span> <span id="file-size"></span></figcaption></figure>
       <section id="compare-section" aria-labelledby="compare-heading" hidden>
-        <div class="comparison-head"><h3 id="compare-heading">Compare and download</h3><button id="mode" aria-pressed="false">Side by side</button></div>
+        <div class="comparison-head"><h3 id="compare-heading" tabindex="-1">Compare and download</h3><button id="mode" aria-pressed="false">Side by side</button></div>
         <div id="compare-frame">
           <div class="tile"><img id="compare-original" alt="Original image"><span class="badge original">Original</span></div>
           <div class="tile" id="enhanced-tile"><img id="compare-enhanced" alt=""><span class="badge enhanced">Enhanced</span></div>
@@ -25,7 +25,12 @@
         </div>
         <div id="compare-control"><label for="compare-position">Comparison position</label>
           <input id="compare-position" type="range" min="0" max="100" value="50"><output id="compare-value" for="compare-position"></output></div>
-        <h3 id="result-title"></h3><p id="compare-message"></p><p id="metrics"></p>
+        <h3 id="result-title"></h3><p id="compare-message"></p><p id="result-profile"></p>
+        <dl id="metrics">
+          <div><dt>Eligible pairs</dt><dd id="eligible"></dd></div>
+          <div><dt>Improved pairs</dt><dd id="improved"></dd></div>
+          <div id="share"><dt>Share improved</dt><dd id="percent"></dd></div>
+        </dl>
         <div id="download-section"><a id="download-link" href="/api/image/export" download>Download enhanced PNG</a></div>
       </section>
     </div>

@@ -49,12 +49,16 @@ export async function showResult(result, type, severity) {
   byId("compare-message").textContent = result.message;
   byId("result-title").textContent = labels[result.outcome];
   const { eligible_count: eligible, improved_count: improved } = result;
-  const percent = eligible > 0 ? ` (${Math.round(100 * improved / eligible)}%)` : "";
-  byId("metrics").textContent = `${type} · ${Math.round(severity * 100)}% severity · ${eligible} eligible pairs · ${improved} improved${percent}`;
+  byId("eligible").textContent = eligible;
+  byId("improved").textContent = improved;
+  byId("share").hidden = eligible === 0;
+  byId("percent").textContent = eligible ? Math.round(100 * improved / eligible) + "%" : "";
+  byId("result-profile").textContent = `${type} · ${Math.round(severity * 100)}% severity`;
   byId("original-section").hidden = true;
   byId("compare-section").hidden = false;
   byId("download-section").hidden = !available;
   byId("view-label").textContent = available ? "Comparison" : "Original";
+  byId("compare-heading").focus();
 }
 
 function drag(event) {
