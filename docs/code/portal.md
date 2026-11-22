@@ -12,6 +12,10 @@
 | Storage Adapter | `chromasense/storage/` | One folder per session on disk. |
 | Server Main | `chromasense/main/` | Settings, wiring, startup cleanup, the idle purge, and the entry point. |
 
+## Browser workspace
+
+Jinja renders the workspace and native help dialogs. Local CSS tokens define the dark and light themes. Only the theme preference is saved in browser storage. The file picker and drop target share one multipart upload path. The controller serializes uploads, enhancement requests, and exports for the page, converts percentage severity to the API range, and waits for previews to decode. The comparison module displays server-rendered PNGs using a draggable clip or two complete views. The export uses the filename from Content-Disposition.
+
 ## Use cases
 
 Each is a class with `execute(request) -> response` in `core/use_cases/`.

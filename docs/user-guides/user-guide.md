@@ -24,15 +24,15 @@ If the page does not open, the computer's firewall may be blocking port 9090. Ch
 
 ## Step 1: Upload a picture
 
-Choose **Choose a PNG or JPEG image** and pick a file. The picture uploads as soon as you choose it.
+Choose **Browse files** or drop one picture onto the image preview. The picture uploads as soon as you choose it.
 
 - Use a PNG or JPEG file, up to 10 MB and 12 megapixels. A typical phone photo fits.
-- When the upload finishes, the original picture appears with its size.
+- When the upload finishes, the original appears with its filename, dimensions, and file size. Use **Replace image** to start with a different picture.
 
 ## Step 2: Choose a profile and severity
 
 1. Under **Color vision profile**, choose **Protan** or **Deutan**.
-2. Set **Severity** from 0 to 1. It starts at 1. At 0, no adjustment is made for the profile; at 1, the full profile is used.
+2. Set **Severity** from 0% to 100%. It starts at 100%. The endpoints use zero and full profile strength, respectively.
 3. Choose **Enhance image**.
 
 A message starting with **Enhancing:** appears, then one starting with **Done:** that says what ChromaSense found. If colors were adjusted, the comparison appears.
@@ -41,13 +41,19 @@ The button becomes available once you have uploaded a picture and chosen a profi
 
 ## Step 3: Compare and download
 
-When ChromaSense has adjusted colors, the comparison shows the enhanced picture on top of the original. Move the **Comparison position** slider to choose how far the enhanced picture covers the original from the left. At 50, the left half is enhanced and the right half is the original, so you can see the same area in both versions. With a keyboard, use the arrow keys on the slider.
+When ChromaSense has adjusted colors, the comparison shows the enhanced picture on top of the original. Move the **Comparison position** slider to choose how far the enhanced picture covers the original from the left. At 50, the left half is enhanced and the right half is the original, so you can see the same area in both versions. Drag the divider directly or use the arrow keys on the slider. Choose **Side by side** to view both complete pictures. Select it again to return to the divider.
 
 Choose **Download enhanced PNG**, just below the message, to save the enhanced picture as `chromasense-enhanced.png`, at the same size as your original. This link appears only when ChromaSense has adjusted colors.
 
+The result lists the profile, severity, eligible pairs, and improved pairs. When any pairs are eligible, the percentage is the share whose simulated separation increased. A result with no improved pairs keeps the original on screen.
+
+## Workspace controls
+
+Use **How it works** for the workflow or **About** for session and processing information. Escape closes either dialog. The sun button switches between dark and light themes.
+
 ## What the messages mean
 
-Messages appear below the upload control, and screen readers announce them. Each starts with a word that tells you its kind:
+Messages appear below the workspace, and screen readers announce them. Each starts with a word that tells you its kind:
 
 | Message starts with | Meaning |
 | --- | --- |

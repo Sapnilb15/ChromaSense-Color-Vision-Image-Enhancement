@@ -23,3 +23,5 @@ test-results/
 
 # Intent-driven UI test suite (SRS-FR-012): kept local, not committed
 /src/portal/tests/browser/intents/
+
+.DS_Store

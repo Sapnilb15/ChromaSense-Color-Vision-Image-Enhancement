@@ -1,75 +1,55 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h1>Make confusable colors easier to tell apart</h1>
-<p class="intro">Upload a picture, choose a color vision profile and severity, compare the result with the original, and download it.</p>
-
-<section class="step" aria-labelledby="step-upload-heading">
-  <h2 id="step-upload-heading">Step 1: Upload a picture</h2>
-  <form id="upload-form" class="upload-form" novalidate>
-    <label for="file-input">Choose a PNG or JPEG image</label>
-    <input type="file" id="file-input" name="file" accept="image/png,image/jpeg" aria-describedby="file-limits">
-    <p id="file-limits" class="hint">PNG or JPEG, up to 10 MB and 12 megapixels.</p>
-  </form>
-</section>
-
-<div id="status" class="status" role="status" aria-live="polite"></div>
-
-<section id="original-section" class="step" aria-labelledby="original-heading" hidden>
-  <h2 id="original-heading">Original image</h2>
-  <figure class="image-figure">
-    <img id="original-image" alt="Original image">
-    <figcaption id="original-caption"></figcaption>
-  </figure>
-</section>
-
-<section class="step" aria-labelledby="step-profile-heading">
-  <h2 id="step-profile-heading">Step 2: Choose a profile and severity</h2>
-  <fieldset class="profile">
-    <legend>Color vision profile</legend>
-    <div class="choice">
-      <input type="radio" id="type-protan" name="cvd-type" value="protan">
-      <label for="type-protan">Protan</label>
+<div class="page-title"><h1>Enhancement workspace</h1>
+<p>Adjust color separation in your photos, charts, and maps.</p></div>
+<div class="layout">
+  <section class="panel canvas" aria-labelledby="preview-title">
+    <div class="panel-head"><h2 id="preview-title">{{ icon('image') }} Image preview</h2><span id="view-label" class="tag">Empty canvas</span></div>
+    <div class="stage" id="stage">
+      <div class="dropzone" id="dropzone">
+        <div id="empty-content">
+          <img class="art" alt="" src="/static/contours.svg">
+          <h3>Drop your image here</h3><p>or select a file from your device</p>
+        </div>
+        <div class="file-button"><label class="picker" for="file-input">{{ icon('upload') }} <span id="picker-caption">Browse files</span>
+          <span class="sr-only">Choose a PNG or JPEG image</span></label>
+        <input type="file" id="file-input" name="file" accept="image/png,image/jpeg" aria-describedby="file-limits"></div>
+      </div>
+      <figure id="original-section" hidden><img id="original-image" alt="Original image"><figcaption><span id="original-caption"></span> <span id="file-size"></span></figcaption></figure>
+      <section id="compare-section" aria-labelledby="compare-heading" hidden>
+        <div class="comparison-head"><h3 id="compare-heading" tabindex="-1">Compare and download</h3><button id="mode" aria-pressed="false">Side by side</button></div>
+        <div id="compare-frame">
+          <div class="tile"><img id="compare-original" alt="Original image"><span class="badge original">Original</span></div>
+          <div class="tile" id="enhanced-tile"><img id="compare-enhanced" alt=""><span class="badge enhanced">Enhanced</span></div>
+          <span id="divider" aria-hidden="true"><b>‹ ›</b></span>
+        </div>
+        <div id="compare-control"><label for="compare-position">Comparison position</label>
+          <input id="compare-position" type="range" min="0" max="100" value="50"><output id="compare-value" for="compare-position"></output></div>
+        <h3 id="result-title"></h3><p id="compare-message"></p><p id="result-profile"></p>
+        <dl id="metrics">
+          <div><dt>Eligible pairs</dt><dd id="eligible"></dd></div>
+          <div><dt>Improved pairs</dt><dd id="improved"></dd></div>
+          <div id="share"><dt>Share improved</dt><dd id="percent"></dd></div>
+        </dl>
+        <small>Pair counts reflect simulated color separation.</small>
+        <div id="download-section"><a id="download-link" href="/api/image/export" download>Download enhanced PNG</a></div>
+      </section>
     </div>
-    <div class="choice">
-      <input type="radio" id="type-deutan" name="cvd-type" value="deutan">
-      <label for="type-deutan">Deutan</label>
-    </div>
-  </fieldset>
-  <div class="slider-field">
-    <label for="severity">Severity</label>
-    <input type="range" id="severity" min="0" max="1" step="0.05" value="1" aria-describedby="severity-hint">
-    <output id="severity-value" for="severity">1.00</output>
-    <p id="severity-hint" class="hint">0 applies no adjustment for the profile; 1 applies the full profile.</p>
-  </div>
-  <button type="button" id="enhance-button" class="button" disabled aria-describedby="enhance-hint">Enhance image</button>
-  <p id="enhance-hint" class="hint">Upload a picture and choose a profile to enable this button.</p>
-</section>
-
-<section id="compare-section" class="step" aria-labelledby="compare-heading" hidden>
-  <h2 id="compare-heading">Step 3: Compare and download</h2>
-  <p id="compare-message" class="compare-message"></p>
-  <p id="download-section" class="download-row" hidden>
-    <a id="download-link" class="button" href="/api/image/export" download="chromasense-enhanced.png">Download enhanced PNG</a>
-  </p>
-  <figure class="image-figure">
-    <div id="compare-frame" class="compare-frame">
-      <img id="compare-original" alt="Original image">
-      <img id="compare-enhanced" class="compare-enhanced" alt="">
-    </div>
-    <figcaption id="compare-caption"></figcaption>
-  </figure>
-  <div id="compare-control" class="slider-field">
-    <label for="compare-position">Comparison position</label>
-    <input type="range" id="compare-position" min="0" max="100" step="1" value="50" aria-describedby="compare-hint">
-    <output id="compare-value" for="compare-position">50 percent enhanced</output>
-    <p id="compare-hint" class="hint">The enhanced image covers the left part of the picture, as far as this position. Move it to compare the same area in both versions.</p>
-  </div>
-</section>
-{% endblock %}
-
-{% block scripts %}
-<script type="module" src="/static/js/upload.js"></script>
-<script type="module" src="/static/js/profile.js"></script>
-<script type="module" src="/static/js/session.js"></script>
+    <div class="canvas-foot"><span id="file-limits">PNG or JPEG, up to 10 MB and 12 megapixels.</span></div>
+  </section>
+  <section class="panel settings" aria-labelledby="settings-title">
+    <div class="panel-head"><h2 id="settings-title">{{ icon('sliders') }} Adjustments</h2></div>
+    <div class="settings-body"><fieldset class="profile"><legend>Color vision profile</legend>
+    {% for key, description in [('protan', 'Red-sensitive deficiency'), ('deutan', 'Green-sensitive deficiency')] %}
+      <label class="choice"><input id="type-{{ key }}" type="radio" name="cvd-type" value="{{ key }}" aria-labelledby="label-{{ key }}" aria-describedby="desc-{{ key }}"><span><strong id="label-{{ key }}">{{ key|capitalize }}</strong><small id="desc-{{ key }}">{{ description }}</small></span></label>
+    {% endfor %}
+    </fieldset>
+    <div class="severity"><label for="severity">Severity</label><output id="severity-value" for="severity">100%</output></div>
+    <input id="severity" type="range" min="0" max="100" step="5" value="100">
+    <div class="endpoints"><span>0%</span><span>100%</span></div>
+    <button id="enhance-button" class="primary" disabled aria-describedby="enhance-hint">{{ icon('spark') }} Enhance image</button>
+    <small id="enhance-hint">Upload an image and select a profile to begin.</small></div>
+  </section>
+</div>
+<div id="status" role="status" aria-live="polite">Ready for upload</div>
 {% endblock %}

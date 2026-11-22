@@ -1,23 +1,35 @@
+{% from 'icons.html' import icon %}
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}ChromaSense{% endblock %}</title>
-    <link rel="icon" href="data:,">
-    <link rel="stylesheet" href="/static/css/app.css">
-  </head>
-  <body>
-    <a class="skip-link" href="#main">Skip to main content</a>
-    <header class="site-header">
-      <p class="site-name">ChromaSense</p>
-    </header>
-    <main id="main" tabindex="-1">
-      {% block content %}{% endblock %}
-    </main>
-    <footer class="site-footer">
-      <p>ChromaSense adjusts colors to help tell them apart. It does not diagnose color vision deficiency or give medical advice, and it does not show exactly what typical color vision sees.</p>
-    </footer>
-    {% block scripts %}{% endblock %}
-  </body>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ChromaSense · Enhancement workspace</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <header><div class="shell topbar">
+    <div class="brand">{{ icon('mark') }} ChromaSense</div><span class="product">Color enhancement studio</span>
+    <nav aria-label="Workspace navigation">
+      <button data-dialog="help">How it works</button><button data-dialog="about">About</button>
+      <button id="theme" aria-label="Light theme" aria-pressed="false">{{ icon('sun') }}</button>
+    </nav>
+  </div></header>
+  <main id="main" class="shell" tabindex="-1">{% block content %}{% endblock %}</main>
+  <footer class="shell"><strong>{{ icon('lock') }} Session privacy</strong>
+    <p>Pictures stay on this server for your session. ChromaSense does not diagnose color vision deficiency or give medical advice, and it does not show exactly what typical color vision sees.</p>
+  </footer>
+  <dialog id="help" aria-labelledby="help-title"><h2 id="help-title">How it works</h2>
+    <ol><li>Drop a PNG or JPEG into the workspace or browse your files.</li><li>Choose the Protan or Deutan profile.</li><li>Set the severity from 0% to 100%.</li><li>Enhance the image, then drag the divider or compare side by side.</li><li>Download the enhanced PNG when an adjustment is available.</li></ol>
+    <form method="dialog"><button autofocus>Close</button></form>
+  </dialog>
+  <dialog id="about" aria-labelledby="about-title"><h2 id="about-title">About ChromaSense</h2>
+    <p>ChromaSense finds color pairs that may be hard to distinguish under your selected profile and adjusts targeted regions. Results describe simulated color separation.</p>
+    <p>Your anonymous session ends when you close or reload the page. Idle sessions expire after 30 minutes by default.</p>
+    <form method="dialog"><button autofocus>Close</button></form>
+  </dialog>
+  <script type="module" src="/static/js/workspace.js"></script>
+</body>
 </html>
