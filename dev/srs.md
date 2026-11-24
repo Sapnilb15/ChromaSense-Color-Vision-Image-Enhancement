@@ -1,12 +1,5 @@
 # Software requirements specification
 
-You fill this file in stage 1 (see `README.md`).
-
-State what the system must do only in this file. Class names and the directory tree go in `architecture.md` and `structure.md`. Do not name prompt files here.
-
-Fill the **Required** sections before any agent runs. **Optional** sections may say `none`. The topics follow ISO/IEC/IEEE 29148:2018.
-
-Source: `docs/ChromaSense_SRS.docx` (November 2026). The ID in parentheses after each statement is that document's ID.
 
 ## Required: Identity
 
